@@ -23,8 +23,14 @@ export function ServiceCard({ service, onUpdated }: ServiceCardProps) {
   const title =
     service.title || service.translations?.ar?.title || service.slug;
   const coverUrl = service.media?.card?.url;
+  const canShowOnWebsite = Boolean(service.media?.card?.id);
+  const blockPublish = service.draft && !canShowOnWebsite;
 
   async function toggleVisibility() {
+    if (blockPublish) {
+      toast.error(copy.missingMainPhoto);
+      return;
+    }
     setBusy(true);
     try {
       const result = service.draft
@@ -56,32 +62,37 @@ export function ServiceCard({ service, onUpdated }: ServiceCardProps) {
       <div className="flex flex-1 flex-col gap-3 p-4">
         <h2 className="text-base font-bold text-foreground">{title}</h2>
         <StatusPill variant={service.draft ? "hidden" : "visible"} />
-        <div className="mt-auto flex flex-wrap gap-2 pt-2">
-          <Link href={`/services/${service.id}`} className="btn-secondary">
-            {copy.edit}
-          </Link>
-          <a
-            href={servicePublicUrl(service.slug, "ar")}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-ghost"
-          >
-            {copy.viewOnWebsite}
-          </a>
-          <button
-            type="button"
-            className="btn-ghost"
-            disabled={busy}
-            onClick={() => void toggleVisibility()}
-          >
-            {busy
-              ? service.draft
-                ? copy.showingOnWebsite
-                : copy.hidingFromWebsite
-              : service.draft
-                ? copy.showOnWebsite
-                : copy.hideFromWebsite}
-          </button>
+        <div className="mt-auto flex flex-col gap-2 pt-2">
+          <div className="flex flex-wrap gap-2">
+            <Link href={`/services/${service.id}`} className="btn-secondary">
+              {copy.edit}
+            </Link>
+            <a
+              href={servicePublicUrl(service.slug, "ar")}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-ghost"
+            >
+              {copy.viewOnWebsite}
+            </a>
+            <button
+              type="button"
+              className="btn-ghost"
+              disabled={busy || blockPublish}
+              onClick={() => void toggleVisibility()}
+            >
+              {busy
+                ? service.draft
+                  ? copy.showingOnWebsite
+                  : copy.hidingFromWebsite
+                : service.draft
+                  ? copy.showOnWebsite
+                  : copy.hideFromWebsite}
+            </button>
+          </div>
+          {blockPublish ? (
+            <p className="text-xs text-danger">{copy.missingMainPhoto}</p>
+          ) : null}
         </div>
       </div>
     </article>

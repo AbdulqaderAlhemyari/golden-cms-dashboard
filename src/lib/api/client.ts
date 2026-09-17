@@ -1,4 +1,5 @@
-import { clearToken, getToken } from "@/lib/auth/token";
+import { getToken } from "@/lib/auth/token";
+import { redirectToLoginExpired } from "@/lib/auth/session";
 import { ApiError, type ApiErrorBody } from "@/lib/errors/mapApiError";
 
 function getBaseUrl(): string {
@@ -70,7 +71,7 @@ export async function apiFetch<T>(
     const message = errBody?.error?.message ?? response.statusText;
 
     if (response.status === 401 && auth) {
-      clearToken();
+      redirectToLoginExpired();
     }
 
     throw new ApiError(code, message, response.status, errBody?.error?.details);

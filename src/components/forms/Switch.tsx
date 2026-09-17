@@ -42,17 +42,23 @@ export function Switch({
         disabled={disabled}
         onClick={() => onChange(!checked)}
         className={cn(
-          "relative mt-0.5 h-7 w-12 shrink-0 rounded-full transition-colors",
-          checked ? "bg-primary" : "bg-slate-300",
+          "inline-flex min-h-[var(--touch-min)] min-w-[var(--touch-min)] shrink-0 items-center justify-center",
           disabled && "cursor-not-allowed opacity-55",
         )}
       >
         <span
           className={cn(
-            "absolute top-0.5 size-6 rounded-full bg-white shadow transition-all",
-            checked ? "end-0.5" : "start-0.5",
+            "relative h-7 w-12 rounded-full transition-colors",
+            checked ? "bg-primary" : "bg-slate-300",
           )}
-        />
+        >
+          <span
+            className={cn(
+              "absolute top-0.5 size-6 rounded-full bg-white shadow transition-all",
+              checked ? "end-0.5" : "start-0.5",
+            )}
+          />
+        </span>
       </button>
     </div>
   );

@@ -32,7 +32,7 @@ export function mapApiError(error: unknown): string {
   if (error instanceof ApiError) {
     switch (error.code) {
       case "UNAUTHORIZED":
-        return copy.wrongLogin;
+        return copy.sessionExpired;
       case "FORBIDDEN_ORIGIN":
         return copy.connectionFailed;
       case "SLUG_TAKEN":
@@ -44,7 +44,7 @@ export function mapApiError(error: unknown): string {
       case "REVALIDATE_FAILED":
         return copy.updateWebsiteFailure;
       default:
-        if (error.status === 401) return copy.wrongLogin;
+        if (error.status === 401) return copy.sessionExpired;
         if (error.status === 502 || error.status === 503) {
           return copy.updateWebsiteFailure;
         }

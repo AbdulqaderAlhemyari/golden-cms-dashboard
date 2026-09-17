@@ -30,7 +30,7 @@ export function LanguageTabs({
         role="tab"
         aria-selected={value === "ar"}
         className={cn(
-          "min-h-9 rounded-md px-3 text-sm font-semibold transition-colors",
+          "min-h-[var(--touch-min)] rounded-md px-3 text-sm font-semibold transition-colors",
           value === "ar"
             ? "bg-primary text-primary-foreground"
             : "text-muted hover:text-foreground",
@@ -44,7 +44,7 @@ export function LanguageTabs({
         role="tab"
         aria-selected={value === "en"}
         className={cn(
-          "min-h-9 rounded-md px-3 text-sm font-semibold transition-colors",
+          "min-h-[var(--touch-min)] rounded-md px-3 text-sm font-semibold transition-colors",
           value === "en"
             ? "bg-primary text-primary-foreground"
             : "text-muted hover:text-foreground",

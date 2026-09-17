@@ -9,6 +9,7 @@ import { Switch } from "@/components/forms/Switch";
 import { TextArea } from "@/components/forms/TextArea";
 import { TextField } from "@/components/forms/TextField";
 import { LanguageTabs, type ContentLocale } from "@/components/shell/LanguageTabs";
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import {
   createProject,
   slugifyProjectTitle,
@@ -144,6 +145,8 @@ export function NewProjectForm() {
     Boolean(year) ||
     photoIds.some((id) => id.trim());
 
+  const { dialog: unsavedDialog } = useUnsavedChanges(dirty);
+
   useEffect(() => {
     register({
       locale,
@@ -157,7 +160,9 @@ export function NewProjectForm() {
   }, [locale, dirty, mutation.isPending, register, fieldsByLocale, year, featured, photoIds, slug, slugTouched]);
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 p-6 md:p-8">
+    <>
+      {unsavedDialog}
+      <div className="mx-auto flex w-full max-w-2xl flex-col gap-6 p-6 md:p-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <LanguageTabs value={locale} onChange={setLocale} />
         <button
@@ -289,5 +294,6 @@ export function NewProjectForm() {
         </div>
       </section>
     </div>
+    </>
   );
 }

@@ -12,6 +12,7 @@ import { Switch } from "@/components/forms/Switch";
 import { TagInput } from "@/components/forms/TagInput";
 import { TextField } from "@/components/forms/TextField";
 import { LanguageTabs, type ContentLocale } from "@/components/shell/LanguageTabs";
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import {
   deleteProject,
   getProject,
@@ -141,6 +142,11 @@ export function ProjectEditForm({ projectId }: ProjectEditFormProps) {
     return now !== baseline;
   }, [baseline, fieldsByLocale, year, slug, featured, published, gallery, coverId]);
 
+  const { dialog: unsavedDialog } = useUnsavedChanges(dirty);
+
+  const canShowOnWebsite = Boolean(coverId);
+  const blockPublish = !published && !canShowOnWebsite;
+
   const featuredWarningVisible = useMemo(() => {
     if (!featured || !published) return false;
     const others = countsQuery.data?.featured ?? 0;
@@ -198,6 +204,10 @@ export function ProjectEditForm({ projectId }: ProjectEditFormProps) {
   });
 
   async function toggleVisibility() {
+    if (!published && !canShowOnWebsite) {
+      toast.error(copy.missingMainPhoto);
+      return;
+    }
     setVisibilityBusy(true);
     try {
       const result = published
@@ -273,6 +283,7 @@ export function ProjectEditForm({ projectId }: ProjectEditFormProps) {
 
   return (
     <>
+      {unsavedDialog}
       <div className="flex flex-1 flex-col gap-6 p-6 md:p-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap gap-2">
@@ -282,7 +293,7 @@ export function ProjectEditForm({ projectId }: ProjectEditFormProps) {
                 type="button"
                 onClick={() => setTab(item.key)}
                 className={cn(
-                  "rounded-full px-4 py-2 text-sm font-semibold transition-colors",
+                  "min-h-[var(--touch-min)] rounded-full px-4 py-2 text-sm font-semibold transition-colors",
                   tab === item.key
                     ? "bg-primary text-primary-foreground"
                     : "bg-surface text-muted ring-1 ring-border hover:text-foreground",
@@ -297,36 +308,41 @@ export function ProjectEditForm({ projectId }: ProjectEditFormProps) {
               </button>
             ))}
           </div>
-          <div className="flex flex-wrap gap-2">
-            <a
-              href={projectPublicUrl(slug || query.data.project.slug, locale)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-secondary"
-            >
-              {copy.viewOnWebsite}
-            </a>
-            <button
-              type="button"
-              className="btn-secondary"
-              disabled={visibilityBusy}
-              onClick={() => void toggleVisibility()}
-            >
-              {visibilityBusy
-                ? published
-                  ? copy.hidingFromWebsite
-                  : copy.showingOnWebsite
-                : published
-                  ? copy.hideFromWebsite
-                  : copy.showOnWebsite}
-            </button>
-            <button
-              type="button"
-              className="btn-danger"
-              onClick={() => setConfirmDelete(true)}
-            >
-              {copy.delete}
-            </button>
+          <div className="flex flex-col items-stretch gap-2 sm:items-end">
+            <div className="flex flex-wrap gap-2">
+              <a
+                href={projectPublicUrl(slug || query.data.project.slug, locale)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-secondary"
+              >
+                {copy.viewOnWebsite}
+              </a>
+              <button
+                type="button"
+                className="btn-secondary"
+                disabled={visibilityBusy || blockPublish}
+                onClick={() => void toggleVisibility()}
+              >
+                {visibilityBusy
+                  ? published
+                    ? copy.hidingFromWebsite
+                    : copy.showingOnWebsite
+                  : published
+                    ? copy.hideFromWebsite
+                    : copy.showOnWebsite}
+              </button>
+              <button
+                type="button"
+                className="btn-danger"
+                onClick={() => setConfirmDelete(true)}
+              >
+                {copy.delete}
+              </button>
+            </div>
+            {blockPublish ? (
+              <p className="text-xs text-danger">{copy.missingMainPhoto}</p>
+            ) : null}
           </div>
         </div>
 
@@ -371,7 +387,12 @@ export function ProjectEditForm({ projectId }: ProjectEditFormProps) {
               <Switch
                 label={copy.showOnWebsite}
                 checked={published}
-                onChange={setPublished}
+                disabled={blockPublish}
+                helpText={blockPublish ? copy.missingMainPhoto : undefined}
+                onChange={(checked) => {
+                  if (checked && !canShowOnWebsite) return;
+                  setPublished(checked);
+                }}
               />
               <Switch
                 label={copy.showOnHome}

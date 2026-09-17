@@ -1,4 +1,5 @@
-import { getToken, clearToken } from "@/lib/auth/token";
+import { getToken } from "@/lib/auth/token";
+import { redirectToLoginExpired } from "@/lib/auth/session";
 import { ApiError, type ApiErrorBody } from "@/lib/errors/mapApiError";
 import { useApiMock } from "@/lib/api/mock";
 
@@ -63,7 +64,7 @@ async function parseError(response: Response): Promise<never> {
   }
   const code = data?.error?.code ?? `HTTP_${response.status}`;
   const message = data?.error?.message ?? response.statusText;
-  if (response.status === 401) clearToken();
+  if (response.status === 401) redirectToLoginExpired();
   throw new ApiError(code, message, response.status, data?.error?.details);
 }
 

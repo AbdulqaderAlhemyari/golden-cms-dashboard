@@ -211,6 +211,8 @@ export const copy = {
   confirm: "تأكيد",
   close: "إغلاق",
   contentLanguage: "لغة المحتوى",
+  openMenu: "فتح القائمة",
+  closeMenu: "إغلاق القائمة",
 } as const;
 
 export type Copy = typeof copy;

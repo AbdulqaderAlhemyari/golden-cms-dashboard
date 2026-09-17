@@ -455,20 +455,21 @@ Implement in order. Dashboard phases assume matching API phases from `01-api-bac
 
 ---
 
-### Phase 11 — Polish, guards & handoff
+### Phase 11 — Polish, guards & handoff ✅ COMPLETE
 
 **Goal:** Safe, trustworthy experience for non-technical staff.
 
-- [ ] Unsaved changes dialog on all edit screens
-- [ ] Disable **إظهار في الموقع** if required fields empty — inline **يرجى إضافة…**
-- [ ] All loading states in Arabic (**جاري الحفظ…**, **جاري التحميل…**)
-- [ ] 401 → logout + redirect login with friendly message
-- [ ] Tablet pass: sidebar collapsible, touch targets ≥ 44px
-- [ ] README: setup, env, login credentials (from API seed), editor workflow diagram
-- [ ] Short **دليل المستخدم** (1-page PDF or markdown in repo) in Arabic for staff
-- [ ] Smoke checklist (see below)
+- [x] Unsaved changes dialog on all edit screens
+- [x] Disable **إظهار في الموقع** if required fields empty — inline **يرجى إضافة…**
+- [x] All loading states in Arabic (**جاري الحفظ…**, **جاري التحميل…**)
+- [x] 401 → logout + redirect login with friendly message
+- [x] Tablet pass: sidebar collapsible, touch targets ≥ 44px
+- [x] README: setup, env, login credentials (from API seed), editor workflow diagram
+- [x] Short **دليل المستخدم** (1-page PDF or markdown in repo) in Arabic for staff
+- [x] Smoke checklist (see below — also mirrored in user guide)
 
-**Done when:** non-developer can follow Arabic guide and edit home + one project without help.
+**Done when:** non-developer can follow Arabic guide and edit home + one project without help.  
+**Completed:** Phase 11 polish, guards, README, and `docs/guides/user-guide-ar.md`.
 
 ---
 

@@ -22,8 +22,14 @@ export function ProjectCard({ project, onUpdated }: ProjectCardProps) {
   const [busy, setBusy] = useState(false);
   const title = project.title || project.translations?.ar?.title || project.slug;
   const coverUrl = project.cover?.url;
+  const canShowOnWebsite = Boolean(project.cover?.id);
+  const blockPublish = project.draft && !canShowOnWebsite;
 
   async function toggleVisibility() {
+    if (blockPublish) {
+      toast.error(copy.missingMainPhoto);
+      return;
+    }
     setBusy(true);
     try {
       const result = project.draft
@@ -67,32 +73,37 @@ export function ProjectCard({ project, onUpdated }: ProjectCardProps) {
           ) : null}
         </div>
 
-        <div className="mt-auto flex flex-wrap gap-2 pt-2">
-          <Link href={`/projects/${project.id}`} className="btn-secondary">
-            {copy.edit}
-          </Link>
-          <a
-            href={projectPublicUrl(project.slug, "ar")}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-ghost"
-          >
-            {copy.viewOnWebsite}
-          </a>
-          <button
-            type="button"
-            className="btn-ghost"
-            disabled={busy}
-            onClick={() => void toggleVisibility()}
-          >
-            {busy
-              ? project.draft
-                ? copy.showingOnWebsite
-                : copy.hidingFromWebsite
-              : project.draft
-                ? copy.showOnWebsite
-                : copy.hideFromWebsite}
-          </button>
+        <div className="mt-auto flex flex-col gap-2 pt-2">
+          <div className="flex flex-wrap gap-2">
+            <Link href={`/projects/${project.id}`} className="btn-secondary">
+              {copy.edit}
+            </Link>
+            <a
+              href={projectPublicUrl(project.slug, "ar")}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-ghost"
+            >
+              {copy.viewOnWebsite}
+            </a>
+            <button
+              type="button"
+              className="btn-ghost"
+              disabled={busy || blockPublish}
+              onClick={() => void toggleVisibility()}
+            >
+              {busy
+                ? project.draft
+                  ? copy.showingOnWebsite
+                  : copy.hidingFromWebsite
+                : project.draft
+                  ? copy.showOnWebsite
+                  : copy.hideFromWebsite}
+            </button>
+          </div>
+          {blockPublish ? (
+            <p className="text-xs text-danger">{copy.missingMainPhoto}</p>
+          ) : null}
         </div>
       </div>
     </article>
