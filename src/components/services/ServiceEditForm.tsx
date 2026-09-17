@@ -201,7 +201,8 @@ export function ServiceEditForm({ serviceId }: ServiceEditFormProps) {
 
   useEffect(() => {
     return () => register(null);
-  }, [register]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (query.isLoading) {
     return (

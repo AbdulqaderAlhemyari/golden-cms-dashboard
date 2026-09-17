@@ -2,11 +2,9 @@
 
 import {
   createContext,
-  useCallback,
   useContext,
-  useMemo,
   useRef,
-  useState,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
 import type { ContentLocale } from "@/components/shell/LanguageTabs";
@@ -32,78 +30,100 @@ type RegisterContextValue = {
   register: (state: RegisterPayload | null) => void;
 };
 
-const RegisterContext = createContext<RegisterContextValue | null>(null);
-const ChromeContext = createContext<EditorChromeState | null>(null);
-
-/**
- * Outer shell keeps `children` referentially stable so chrome state updates
- * inside the inner provider do not re-render the whole dashboard tree.
- */
-export function EditorChromeProvider({ children }: { children: ReactNode }) {
-  return <EditorChromeProviderInner>{children}</EditorChromeProviderInner>;
-}
-
-function EditorChromeProviderInner({ children }: { children: ReactNode }) {
-  const [chrome, setChrome] = useState<EditorChromeState | null>(null);
-
-  // Callbacks live in a ref so register() only commits React state when
-  // locale / dirty / saving change — not when save/setLocale identities churn.
-  const callbacksRef = useRef<{
+type ChromeStore = {
+  chrome: EditorChromeState | null;
+  callbacks: {
     setLocale: (locale: ContentLocale) => void;
     save: () => void;
-  }>({
-    setLocale: () => undefined,
-    save: () => undefined,
-  });
+  };
+  listeners: Set<() => void>;
+};
 
-  const stableSetLocale = useCallback((locale: ContentLocale) => {
-    callbacksRef.current.setLocale(locale);
-  }, []);
-
-  const stableSave = useCallback(() => {
-    callbacksRef.current.save();
-  }, []);
-
-  const register = useCallback(
-    (state: RegisterPayload | null) => {
-      if (state === null) {
-        setChrome((prev) => (prev === null ? prev : null));
-        return;
-      }
-
-      callbacksRef.current = {
-        setLocale: state.setLocale,
-        save: state.save,
-      };
-
-      setChrome((prev) => {
-        if (
-          prev &&
-          prev.locale === state.locale &&
-          prev.dirty === state.dirty &&
-          prev.saving === state.saving
-        ) {
-          return prev;
-        }
-        return {
-          active: true,
-          locale: state.locale,
-          dirty: state.dirty,
-          saving: state.saving,
-          setLocale: stableSetLocale,
-          save: stableSave,
-        };
-      });
+function createChromeStore(): ChromeStore {
+  return {
+    chrome: null,
+    callbacks: {
+      setLocale: () => undefined,
+      save: () => undefined,
     },
-    [stableSave, stableSetLocale],
+    listeners: new Set(),
+  };
+}
+
+function subscribeStore(store: ChromeStore, onStoreChange: () => void) {
+  store.listeners.add(onStoreChange);
+  return () => {
+    store.listeners.delete(onStoreChange);
+  };
+}
+
+function getStoreSnapshot(store: ChromeStore) {
+  return store.chrome;
+}
+
+function emit(store: ChromeStore) {
+  store.listeners.forEach((listener) => listener());
+}
+
+function registerInStore(store: ChromeStore, state: RegisterPayload | null) {
+  if (state === null) {
+    if (store.chrome === null) return;
+    store.chrome = null;
+    emit(store);
+    return;
+  }
+
+  store.callbacks = {
+    setLocale: state.setLocale,
+    save: state.save,
+  };
+
+  const prev = store.chrome;
+  if (
+    prev &&
+    prev.locale === state.locale &&
+    prev.dirty === state.dirty &&
+    prev.saving === state.saving
+  ) {
+    return;
+  }
+
+  store.chrome = {
+    active: true,
+    locale: state.locale,
+    dirty: state.dirty,
+    saving: state.saving,
+    setLocale: (locale) => store.callbacks.setLocale(locale),
+    save: () => store.callbacks.save(),
+  };
+  emit(store);
+}
+
+const RegisterContext = createContext<RegisterContextValue | null>(null);
+const StoreContext = createContext<ChromeStore | null>(null);
+
+export function EditorChromeProvider({ children }: { children: ReactNode }) {
+  // One store per provider mount; register identity never changes.
+  const storeRef = useRef<ChromeStore | null>(null);
+  if (storeRef.current === null) {
+    storeRef.current = createChromeStore();
+  }
+  const store = storeRef.current;
+
+  const registerRef = useRef<(state: RegisterPayload | null) => void>(
+    (state) => registerInStore(store, state),
   );
 
-  const registerValue = useMemo(() => ({ register }), [register]);
+  const registerValueRef = useRef<RegisterContextValue>({
+    register: registerRef.current,
+  });
 
   return (
-    <RegisterContext.Provider value={registerValue}>
-      <ChromeContext.Provider value={chrome}>{children}</ChromeContext.Provider>
-    </RegisterContext.Provider>
+    <StoreContext.Provider value={store}>
+      <RegisterContext.Provider value={registerValueRef.current}>
+        {children}
+      </RegisterContext.Provider>
+    </StoreContext.Provider>
   );
 }
 
@@ -116,5 +136,11 @@ export function useEditorChrome(): RegisterContextValue {
 }
 
 export function useOptionalEditorChrome(): EditorChromeState | null {
-  return useContext(ChromeContext);
+  const store = useContext(StoreContext);
+  return useSyncExternalStore(
+    (onStoreChange) =>
+      store ? subscribeStore(store, onStoreChange) : () => undefined,
+    () => (store ? getStoreSnapshot(store) : null),
+    () => null,
+  );
 }

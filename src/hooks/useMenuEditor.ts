@@ -121,7 +121,8 @@ export function useMenuEditor() {
 
   useEffect(() => {
     return () => register(null);
-  }, [register]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const updateLabel = useCallback(
     (location: MenuLocation, index: number, label: string) => {

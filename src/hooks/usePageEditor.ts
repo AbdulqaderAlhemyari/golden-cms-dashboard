@@ -52,17 +52,25 @@ export function usePageEditor(pageKey: ApiPageKey) {
 
   const { dialog: unsavedDialog } = useUnsavedChanges(dirty);
 
+  const draftRef = useRef(draft);
+  const localeRef = useRef(locale);
+  draftRef.current = draft;
+  localeRef.current = locale;
+
   const mutation = useMutation({
     mutationFn: () =>
       patchPage(pageKey, {
-        locale,
-        sections: draft,
+        locale: localeRef.current,
+        sections: draftRef.current,
       }),
     onSuccess: (data) => {
-      const next = cloneSections(data.sections ?? draft);
+      const next = cloneSections(data.sections ?? draftRef.current);
       setDraft(next);
       baselineRef.current = stableStringify(next);
-      void queryClient.setQueryData(["page", pageKey, locale], data);
+      void queryClient.setQueryData(
+        ["page", pageKey, localeRef.current],
+        data,
+      );
       toast.success(copy.saved);
     },
     onError: (error) => {
@@ -113,7 +121,9 @@ export function usePageEditor(pageKey: ApiPageKey) {
 
   useEffect(() => {
     return () => register(null);
-  }, [register]);
+    // Unmount only — register is a stable store API.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return {
     locale,
