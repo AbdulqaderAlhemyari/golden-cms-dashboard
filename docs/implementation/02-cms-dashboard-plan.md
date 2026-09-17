@@ -391,21 +391,22 @@ Implement in order. Dashboard phases assume matching API phases from `01-api-bac
 
 ---
 
-### Phase 8 — Services list & edit
+### Phase 8 — Services list & edit ✅ COMPLETE
 
 **Goal:** Three services — one screen each, plain tabs.
 
 **List (`/services`):**
-- [ ] Simple cards (image, title, status)
-- [ ] **تعديل** only (no create in v1 if API keeps fixed 3 — or hide **إضافة خدمة**)
+- [x] Simple cards (image, title, status)
+- [x] **تعديل** only (no create in v1 if API keeps fixed 3 — or hide **إضافة خدمة**)
 
 **Edit (`/services/[id]`):**
-- [ ] Tab **بطاقة صفحة الخدمات**: title, description, details list, image, photo left/right
-- [ ] Tab **صفحة الخدمة الكاملة**: banner, introduction, scope items, standards, methodology steps
-- [ ] Tab **الصور**: gallery like projects
-- [ ] Show/hide on website toggles
+- [x] Tab **بطاقة صفحة الخدمات**: title, description, details list, image, photo left/right
+- [x] Tab **صفحة الخدمة الكاملة**: banner, introduction, scope items, standards, methodology steps
+- [x] Tab **الصور**: gallery like projects
+- [x] Show/hide on website toggles
 
-**Done when:** all 3 seeded services editable in AR/EN.
+**Done when:** all 3 seeded services editable in AR/EN.  
+**Completed:** Phase 8 services list + 3-tab editor (mock or API).
 
 ---
 

@@ -1,11 +1,5 @@
-import { EmptyState } from "@/components/feedback/EmptyState";
-import { PlaceholderScreen } from "@/components/shell/PlaceholderScreen";
-import { copy } from "@/lib/copy/ar";
+import { ServicesList } from "@/components/services/ServicesList";
 
 export default function ServicesPage() {
-  return (
-    <PlaceholderScreen>
-      <EmptyState message={copy.noServicesYet} />
-    </PlaceholderScreen>
-  );
+  return <ServicesList />;
 }
