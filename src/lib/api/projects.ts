@@ -252,6 +252,186 @@ export async function unpublishProject(
   );
 }
 
+export async function getProject(
+  idOrSlug: string,
+  locale: "ar" | "en" = "ar",
+): Promise<{ project: Project }> {
+  if (useApiMock()) {
+    await new Promise((r) => setTimeout(r, 150));
+    const project = mockProjects.find(
+      (p) => p.id === idOrSlug || p.slug === idOrSlug,
+    );
+    if (!project) {
+      const { ApiError } = await import("@/lib/errors/mapApiError");
+      throw new ApiError("NOT_FOUND", "Project not found", 404);
+    }
+    const title =
+      locale === "en"
+        ? project.translations?.en?.title ?? project.title
+        : project.translations?.ar?.title ?? project.title;
+    return { project: { ...project, title: title ?? project.title } };
+  }
+
+  return apiFetch<{ project: Project }>(
+    `/admin/projects/${idOrSlug}?locale=${locale}`,
+    { method: "GET" },
+  );
+}
+
+export type UpdateProjectInput = {
+  slug?: string;
+  year?: number | null;
+  featured?: boolean;
+  draft?: boolean;
+  coverMediaId?: string | null;
+  translations?: {
+    ar?: Partial<ProjectTranslation>;
+    en?: Partial<ProjectTranslation>;
+  };
+};
+
+export async function updateProject(
+  idOrSlug: string,
+  input: UpdateProjectInput,
+): Promise<{ project: Project }> {
+  if (useApiMock()) {
+    await new Promise((r) => setTimeout(r, 250));
+    const index = mockProjects.findIndex(
+      (p) => p.id === idOrSlug || p.slug === idOrSlug,
+    );
+    if (index < 0) {
+      const { ApiError } = await import("@/lib/errors/mapApiError");
+      throw new ApiError("NOT_FOUND", "Project not found", 404);
+    }
+    const existing = mockProjects[index];
+    const next: Project = {
+      ...existing,
+      slug: input.slug ?? existing.slug,
+      year: input.year !== undefined ? input.year : existing.year,
+      featured: input.featured ?? existing.featured,
+      draft: input.draft ?? existing.draft,
+      translations: {
+        ar: {
+          title: existing.translations?.ar?.title ?? existing.title ?? "",
+          client: existing.translations?.ar?.client ?? "",
+          location: existing.translations?.ar?.location ?? "",
+          content: existing.translations?.ar?.content ?? "",
+          services: existing.translations?.ar?.services ?? [],
+          ...input.translations?.ar,
+        },
+        en: {
+          title: existing.translations?.en?.title ?? "",
+          client: existing.translations?.en?.client ?? "",
+          location: existing.translations?.en?.location ?? "",
+          content: existing.translations?.en?.content ?? "",
+          services: existing.translations?.en?.services ?? [],
+          ...input.translations?.en,
+        },
+      },
+    };
+    next.title = next.translations?.ar?.title || next.translations?.en?.title;
+    if (input.coverMediaId !== undefined) {
+      next.cover = input.coverMediaId
+        ? next.gallery?.find((g) => g.id === input.coverMediaId) ?? {
+            id: input.coverMediaId,
+          }
+        : null;
+    }
+
+    const warnings: Project["warnings"] = [];
+    if (next.featured && !next.draft) {
+      const featuredCount = mockProjects.filter(
+        (p) => p.id !== next.id && p.featured && !p.draft,
+      ).length + 1;
+      if (featuredCount > 3) {
+        warnings.push({
+          code: "FEATURED_LIMIT",
+          message: "More than 3 featured",
+        });
+      }
+    }
+    next.warnings = warnings.length ? warnings : undefined;
+    mockProjects[index] = next;
+    return { project: next };
+  }
+
+  return apiFetch<{ project: Project }>(`/admin/projects/${idOrSlug}`, {
+    method: "PATCH",
+    body: input,
+  });
+}
+
+export async function setProjectGallery(
+  idOrSlug: string,
+  mediaIds: string[],
+): Promise<{ project: Project }> {
+  if (useApiMock()) {
+    const index = mockProjects.findIndex(
+      (p) => p.id === idOrSlug || p.slug === idOrSlug,
+    );
+    if (index < 0) {
+      const { ApiError } = await import("@/lib/errors/mapApiError");
+      throw new ApiError("NOT_FOUND", "Project not found", 404);
+    }
+    const existing = mockProjects[index];
+    const prevById = new Map((existing.gallery ?? []).map((g) => [g.id, g]));
+    const gallery = mediaIds.map(
+      (id) => prevById.get(id) ?? { id, url: undefined },
+    );
+    let cover = existing.cover;
+    if (cover && !mediaIds.includes(cover.id)) {
+      cover = gallery[0] ?? null;
+    }
+    if (!cover && gallery[0]) cover = gallery[0];
+    const next = { ...existing, gallery, cover };
+    mockProjects[index] = next;
+    return { project: next };
+  }
+
+  return apiFetch<{ project: Project }>(`/admin/projects/${idOrSlug}/gallery`, {
+    method: "PUT",
+    body: { mediaIds },
+  });
+}
+
+export async function setProjectCover(
+  idOrSlug: string,
+  mediaId: string | null,
+): Promise<{ project: Project }> {
+  if (useApiMock()) {
+    const index = mockProjects.findIndex(
+      (p) => p.id === idOrSlug || p.slug === idOrSlug,
+    );
+    if (index < 0) {
+      const { ApiError } = await import("@/lib/errors/mapApiError");
+      throw new ApiError("NOT_FOUND", "Project not found", 404);
+    }
+    const existing = mockProjects[index];
+    const cover = mediaId
+      ? existing.gallery?.find((g) => g.id === mediaId) ?? { id: mediaId }
+      : null;
+    const next = { ...existing, cover };
+    mockProjects[index] = next;
+    return { project: next };
+  }
+
+  return apiFetch<{ project: Project }>(`/admin/projects/${idOrSlug}/cover`, {
+    method: "PUT",
+    body: { mediaId },
+  });
+}
+
+export async function deleteProject(idOrSlug: string): Promise<void> {
+  if (useApiMock()) {
+    mockProjects = mockProjects.filter(
+      (p) => p.id !== idOrSlug && p.slug !== idOrSlug,
+    );
+    return;
+  }
+
+  await apiFetch<void>(`/admin/projects/${idOrSlug}`, { method: "DELETE" });
+}
+
 export function projectPublicUrl(slug: string, locale: "ar" | "en" = "ar"): string {
   const base = (process.env.NEXT_PUBLIC_WEBSITE_URL ?? "http://localhost:3000").replace(
     /\/$/,

@@ -361,32 +361,33 @@ Implement in order. Dashboard phases assume matching API phases from `01-api-bac
 
 ---
 
-### Phase 7 — Project edit (full)
+### Phase 7 — Project edit (full) ✅ COMPLETE
 
 **Goal:** Richest editor — photos without folder names.
 
 **Tabs:** **الأساسيات** | **الوصف** | **الصور** | **مظهر البحث في جوجل** (collapsed)
 
 **Basics tab:**
-- [ ] title, client, location, year, service tags (simple tag input)
-- [ ] Switch **إظهار في الموقع** / **إظهار في الصفحة الرئيسية**
-- [ ] Warning if featured count > 3 (fetch count or API warning)
-- [ ] **حفظ** + optional **إظهار في الموقع** action
+- [x] title, client, location, year, service tags (simple tag input)
+- [x] Switch **إظهار في الموقع** / **إظهار في الصفحة الرئيسية**
+- [x] Warning if featured count > 3 (fetch count or API warning)
+- [x] **حفظ** + optional **إظهار في الموقع** action
 
 **Description tab:**
-- [ ] Rich text **نص منسّق**
+- [x] Rich text **نص منسّق**
 
 **Photos tab:**
-- [ ] `ImageGallery`: upload, drag reorder, set **الصورة الرئيسية**
-- [ ] Optional **وصف قصير للصورة** per image (side panel)
-- [ ] Upload shows **جاري رفع الصورة…**
+- [x] `ImageGallery`: upload, drag reorder, set **الصورة الرئيسية**
+- [x] Optional **وصف قصير للصورة** per image (side panel)
+- [x] Upload shows **جاري رفع الصورة…**
 
 **Actions:**
-- [ ] **عرض في الموقع** → `{WEBSITE_URL}/{locale}/projects/{slug}`
-- [ ] **إخفاء من الموقع** (primary soft action)
-- [ ] **حذف** with confirm: **هل أنت متأكد من الحذف؟…**
+- [x] **عرض في الموقع** → `{WEBSITE_URL}/{locale}/projects/{slug}`
+- [x] **إخفاء من الموقع** (primary soft action)
+- [x] **حذف** with confirm: **هل أنت متأكد من الحذف؟…**
 
-**Done when:** full project lifecycle: create hidden → add gallery → show on website → update website now.
+**Done when:** full project lifecycle: create hidden → add gallery → show on website → update website now.  
+**Completed:** Phase 7 full project editor with TipTap + dnd gallery.
 
 ---
 

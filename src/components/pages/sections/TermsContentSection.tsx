@@ -18,7 +18,6 @@ export function TermsContentSection({ value, onChange }: Props) {
   return (
     <RichTextField
       label={fields.terms.content}
-      name="terms-content"
       value={current.content ?? ""}
       onChange={(content) => onChange({ ...current, content })}
     />
