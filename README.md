@@ -26,6 +26,7 @@ Edit `.env.local`:
 |----------|---------|
 | `NEXT_PUBLIC_API_URL` | API base including `/api/v1` |
 | `NEXT_PUBLIC_WEBSITE_URL` | Public site URL for preview links |
+| `NEXT_PUBLIC_USE_AUTH_MOCK` | Optional `true` — any email/password logs in (no API) |
 
 ## Develop
 
@@ -34,6 +35,8 @@ npm run dev
 ```
 
 Opens at [http://localhost:3001](http://localhost:3001) (port **3001** so it matches API CORS defaults).
+
+Unauthenticated visits redirect to `/login`. Use the API seeded admin (`ADMIN_EMAIL` / `ADMIN_PASSWORD`), or set `NEXT_PUBLIC_USE_AUTH_MOCK=true` for UI-only work.
 
 ## Scripts
 

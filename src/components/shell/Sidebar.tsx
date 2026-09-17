@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { UpdateWebsiteButton } from "@/components/shell/UpdateWebsiteButton";
 import { cn } from "@/lib/cn";
 import { copy } from "@/lib/copy/ar";
@@ -46,6 +47,8 @@ function NavSection({
 }
 
 export function Sidebar() {
+  const { signOut } = useAuth();
+
   return (
     <aside className="flex h-screen w-64 shrink-0 flex-col border-l border-border bg-surface">
       <div className="border-b border-border px-4 py-5">
@@ -79,7 +82,11 @@ export function Sidebar() {
 
       <div className="space-y-2 border-t border-border px-3 py-4">
         <UpdateWebsiteButton />
-        <button type="button" className="btn-ghost w-full justify-start">
+        <button
+          type="button"
+          className="btn-ghost w-full justify-start"
+          onClick={signOut}
+        >
           {copy.signOut}
         </button>
       </div>

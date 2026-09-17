@@ -259,21 +259,22 @@ Implement in order. Dashboard phases assume matching API phases from `01-api-bac
 
 ---
 
-### Phase 2 — API client & auth
+### Phase 2 — API client & auth ✅ COMPLETE
 
 **Goal:** Login and authenticated requests.
 
-- [ ] `lib/api/client.ts` — base URL, `Authorization: Bearer`, error parsing
-- [ ] `lib/auth/token.ts` — get/set/clear JWT
-- [ ] `/login` page — email + password, Arabic copy, call `POST /auth/login`
-- [ ] On success → store token → redirect `/overview`
-- [ ] On failure → **البريد الإلكتروني أو كلمة المرور غير صحيحة.**
-- [ ] Middleware: protect dashboard routes
-- [ ] `GET /auth/me` on app load to validate token
-- [ ] **تسجيل الخروج** clears token → `/login`
-- [ ] `mapApiError.ts` — no raw errors in UI
+- [x] `lib/api/client.ts` — base URL, `Authorization: Bearer`, error parsing
+- [x] `lib/auth/token.ts` — get/set/clear JWT
+- [x] `/login` page — email + password, Arabic copy, call `POST /auth/login`
+- [x] On success → store token → redirect `/overview`
+- [x] On failure → **البريد الإلكتروني أو كلمة المرور غير صحيحة.**
+- [x] Middleware: protect dashboard routes
+- [x] `GET /auth/me` on app load to validate token
+- [x] **تسجيل الخروج** clears token → `/login`
+- [x] `mapApiError.ts` — no raw errors in UI
 
-**Done when:** can log in against running API (or mock) and reach `/overview`.
+**Done when:** can log in against running API (or mock) and reach `/overview`.  
+**Completed:** Phase 2 auth + API client; optional `NEXT_PUBLIC_USE_AUTH_MOCK` for UI without API.
 
 ---
 
