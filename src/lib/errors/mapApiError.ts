@@ -41,6 +41,9 @@ export function mapApiError(error: unknown): string {
         return copy.updateWebsiteFailure;
       default:
         if (error.status === 401) return copy.wrongLogin;
+        if (error.status === 502 || error.status === 503) {
+          return copy.updateWebsiteFailure;
+        }
         if (error.status === 0 || error.status >= 500) {
           return copy.connectionFailed;
         }

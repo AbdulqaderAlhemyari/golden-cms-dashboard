@@ -102,6 +102,12 @@ export const copy = {
   shortcutEditHome: "تعديل الصفحة الرئيسية",
   shortcutAddProject: "إضافة مشروع",
   shortcutChangePhone: "تغيير رقم الهاتف",
+  projectsSummary: "ملخص المشاريع",
+  projectsVisibleCount: "{count} مشروعاً ظاهراً",
+  projectsHiddenCount: "{count} مخفي",
+  projectsFeaturedCount: "{count} في الرئيسية",
+  projectsLoadFailed: "تعذّر تحميل ملخص المشاريع.",
+  viewAllProjects: "عرض كل المشاريع",
 
   // Placeholders & empty
   placeholderHint:

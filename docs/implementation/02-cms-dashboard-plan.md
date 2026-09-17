@@ -278,18 +278,19 @@ Implement in order. Dashboard phases assume matching API phases from `01-api-bac
 
 ---
 
-### Phase 3 — Overview & «تحديث الموقع الآن»
+### Phase 3 — Overview & «تحديث الموقع الآن» ✅ COMPLETE
 
 **Goal:** Home screen + publish action wired.
 
-- [ ] `/overview` — shortcut cards (تعديل الصفحة الرئيسية · إضافة مشروع · تغيير رقم الهاتف)
-- [ ] Fetch project counts: visible vs hidden
-- [ ] Wire **تحديث الموقع الآن** → `POST /admin/publish/revalidate-website`
-- [ ] Success toast: **تم تحديث الموقع…**
-- [ ] Failure toast: **تم الحفظ هنا، لكن الموقع العام لم يتحدّث…**
-- [ ] Loading state on button: **جاري التحديث…**
+- [x] `/overview` — shortcut cards (تعديل الصفحة الرئيسية · إضافة مشروع · تغيير رقم الهاتف)
+- [x] Fetch project counts: visible vs hidden
+- [x] Wire **تحديث الموقع الآن** → `POST /admin/publish/revalidate-website`
+- [x] Success toast: **تم تحديث الموقع…**
+- [x] Failure toast: **تم الحفظ هنا، لكن الموقع العام لم يتحدّث…**
+- [x] Loading state on button: **جاري التحديث…**
 
-**Done when:** button calls API and shows Arabic success/failure (mock OK until API Phase 9).
+**Done when:** button calls API and shows Arabic success/failure (mock OK until API Phase 9).  
+**Completed:** Phase 3 overview counts + revalidate wired (mock via `NEXT_PUBLIC_USE_AUTH_MOCK`).
 
 ---
 

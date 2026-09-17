@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { revalidateWebsite } from "@/lib/api/publish";
 import { cn } from "@/lib/cn";
 import { copy } from "@/lib/copy/ar";
 
@@ -18,10 +19,14 @@ export function UpdateWebsiteButton({
 
   async function handleClick() {
     setLoading(true);
-    // Phase 1: mock only — API wiring in Phase 3
-    await new Promise((resolve) => setTimeout(resolve, 600));
-    setLoading(false);
-    toast.success(copy.updateWebsiteSuccess);
+    try {
+      await revalidateWebsite();
+      toast.success(copy.updateWebsiteSuccess);
+    } catch (error) {
+      toast.error(copy.updateWebsiteFailure);
+    } finally {
+      setLoading(false);
+    }
   }
 
   if (variant === "compact") {

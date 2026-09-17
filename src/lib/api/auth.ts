@@ -1,4 +1,5 @@
 import { apiFetch } from "@/lib/api/client";
+import { useApiMock } from "@/lib/api/mock";
 import { clearToken, setToken } from "@/lib/auth/token";
 
 export type AuthUser = {
@@ -13,13 +14,11 @@ export type LoginResponse = {
   user: AuthUser;
 };
 
-const useAuthMock = () => process.env.NEXT_PUBLIC_USE_AUTH_MOCK === "true";
-
 export async function login(
   email: string,
   password: string,
 ): Promise<LoginResponse> {
-  if (useAuthMock()) {
+  if (useApiMock()) {
     const data: LoginResponse = {
       token: "mock-gq-cms-token",
       expiresIn: "7d",
@@ -39,7 +38,7 @@ export async function login(
 }
 
 export async function getMe(): Promise<AuthUser> {
-  if (useAuthMock()) {
+  if (useApiMock()) {
     return {
       id: "mock-admin",
       email: "admin@example.com",
