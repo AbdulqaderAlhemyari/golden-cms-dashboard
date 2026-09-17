@@ -1,30 +1,27 @@
+"use client";
+
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { UpdateWebsiteButton } from "@/components/shell/UpdateWebsiteButton";
+import { cn } from "@/lib/cn";
 import { copy } from "@/lib/copy/ar";
-
-const pageLinks = [
-  { href: "/pages/home", label: copy.nav.homePage },
-  { href: "/pages/about", label: copy.nav.aboutPage },
-  { href: "/pages/services", label: copy.nav.servicesPage },
-  { href: "/pages/projects", label: copy.nav.projectsPage },
-  { href: "/pages/contact", label: copy.nav.contactPage },
-  { href: "/pages/terms", label: copy.nav.termsPage },
-] as const;
-
-const settingsLinks = [
-  { href: "/settings/site", label: copy.nav.siteLogo },
-  { href: "/settings/contact", label: copy.nav.contactInfo },
-  { href: "/settings/menu", label: copy.nav.websiteMenu },
-  { href: "/settings/social", label: copy.nav.socialLinks },
-  { href: "/settings/cta", label: copy.nav.ctaBand },
-  { href: "/settings/seo", label: copy.nav.seoAppearance },
-] as const;
+import { settingsLinks, websitePageLinks } from "@/lib/nav";
 
 function NavLink({ href, label }: { href: string; label: string }) {
+  const pathname = usePathname();
+  const active = pathname === href || pathname.startsWith(`${href}/`);
+
   return (
     <Link
       href={href}
-      className="block rounded-lg px-3 py-2.5 text-sm text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
+      className={cn(
+        "block rounded-lg px-3 py-2.5 text-sm transition-colors",
+        active
+          ? "bg-orange-50 font-semibold text-primary"
+          : "text-slate-700 hover:bg-slate-100 hover:text-slate-900",
+      )}
+      aria-current={active ? "page" : undefined}
     >
       {label}
     </Link>
@@ -50,9 +47,9 @@ function NavSection({
 
 export function Sidebar() {
   return (
-    <aside className="flex h-full w-64 shrink-0 flex-col border-l border-slate-200 bg-white">
-      <div className="border-b border-slate-100 px-4 py-5">
-        <p className="text-sm font-bold leading-relaxed text-slate-900">
+    <aside className="flex h-screen w-64 shrink-0 flex-col border-l border-border bg-surface">
+      <div className="border-b border-border px-4 py-5">
+        <p className="text-sm font-bold leading-relaxed text-foreground">
           {copy.appTitle}
         </p>
       </div>
@@ -61,7 +58,7 @@ export function Sidebar() {
         <NavLink href="/overview" label={copy.overview} />
 
         <NavSection title={copy.nav.websitePages}>
-          {pageLinks.map((item) => (
+          {websitePageLinks.map((item) => (
             <NavLink key={item.href} href={item.href} label={item.label} />
           ))}
         </NavSection>
@@ -80,20 +77,9 @@ export function Sidebar() {
         </NavSection>
       </nav>
 
-      <div className="space-y-2 border-t border-slate-100 px-3 py-4">
-        <button
-          type="button"
-          className="w-full rounded-lg bg-amber-600 px-3 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-700"
-        >
-          {copy.updateWebsite}
-        </button>
-        <p className="px-1 text-xs leading-relaxed text-slate-500">
-          {copy.updateWebsiteHelp}
-        </p>
-        <button
-          type="button"
-          className="w-full rounded-lg px-3 py-2.5 text-sm text-slate-600 transition-colors hover:bg-slate-100"
-        >
+      <div className="space-y-2 border-t border-border px-3 py-4">
+        <UpdateWebsiteButton />
+        <button type="button" className="btn-ghost w-full justify-start">
           {copy.signOut}
         </button>
       </div>

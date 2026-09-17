@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { StatusPill } from "@/components/feedback/StatusPill";
 import { copy } from "@/lib/copy/ar";
 
 const shortcuts = [
@@ -9,24 +10,30 @@ const shortcuts = [
 
 export default function OverviewPage() {
   return (
-    <div className="flex flex-1 flex-col gap-8 p-8 md:p-10">
-      <header className="space-y-2">
-        <h1 className="text-2xl font-bold text-slate-900 md:text-3xl">
-          {copy.overview}
-        </h1>
-        <p className="text-lg text-slate-600">{copy.overviewPrompt}</p>
-      </header>
+    <div className="flex flex-1 flex-col gap-8 p-6 md:p-8">
+      <p className="text-lg text-muted">{copy.overviewPrompt}</p>
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {shortcuts.map((item) => (
           <Link
             key={item.href}
             href={item.href}
-            className="rounded-xl border border-slate-200 bg-white px-5 py-6 text-base font-semibold text-slate-800 shadow-sm transition-colors hover:border-amber-300 hover:bg-amber-50"
+            className="card-surface px-5 py-6 text-base font-semibold text-foreground transition-colors hover:border-accent"
           >
             {item.label}
           </Link>
         ))}
+      </section>
+
+      <section className="card-surface space-y-3 p-5">
+        <p className="text-sm font-semibold text-foreground">
+          {copy.contentStatus}
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <StatusPill variant="visible" />
+          <StatusPill variant="hidden" />
+          <StatusPill variant="onHome" />
+        </div>
       </section>
     </div>
   );

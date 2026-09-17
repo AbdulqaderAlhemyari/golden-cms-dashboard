@@ -96,6 +96,24 @@ export const copy = {
   shortcutEditHome: "تعديل الصفحة الرئيسية",
   shortcutAddProject: "إضافة مشروع",
   shortcutChangePhone: "تغيير رقم الهاتف",
+
+  // Placeholders & empty
+  placeholderHint:
+    "هذه الشاشة قيد التجهيز. يمكنك التنقّل من القائمة الجانبية.",
+  pageEditorComingSoon: "ستُربط هذه الصفحة بالحفظ وواجهة البرمجة لاحقاً.",
+  settingsComingSoon: "ستُحفظ هذه الإعدادات عبر واجهة البرمجة في مرحلة لاحقة.",
+  noServicesYet:
+    "لا توجد خدمات معروضة بعد. ستظهر الخدمات الثلاث هنا بعد ربط واجهة البرمجة.",
+  noMediaYet: "لا توجد صور بعد. ارفع أول صورة من هنا لاحقاً.",
+  projectName: "اسم المشروع",
+  projectNamePlaceholder: "مثال: تجهيز مختبر النفط والغاز",
+  projectNameHelp: "سيظهر هذا الاسم في قائمة المشاريع وعلى الموقع.",
+  descriptionHelp: "يمكنك إضافة التفاصيل لاحقاً.",
+  contentStatus: "حالة المحتوى",
+  emptyDefault: "لا يوجد محتوى لعرضه هنا بعد.",
+  confirm: "تأكيد",
+  close: "إغلاق",
+  contentLanguage: "لغة المحتوى",
 } as const;
 
 export type Copy = typeof copy;

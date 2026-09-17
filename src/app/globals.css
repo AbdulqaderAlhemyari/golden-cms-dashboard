@@ -3,17 +3,166 @@
 :root {
   --background: #f8fafc;
   --foreground: #0f172a;
+  --surface: #ffffff;
+  --border: #e2e8f0;
+  --muted: #64748b;
+  --primary: #b45309;
+  --primary-hover: #92400e;
+  --primary-foreground: #ffffff;
   --accent: #d97706;
+  --pill-visible-bg: #dcfce7;
+  --pill-visible-fg: #166534;
+  --pill-hidden-bg: #f1f5f9;
+  --pill-hidden-fg: #475569;
+  --pill-home-bg: #ffedd5;
+  --pill-home-fg: #9a3412;
+  --danger: #b91c1c;
+  --danger-hover: #991b1b;
+  --radius: 0.75rem;
+  --space-page: 2rem;
+  --space-section: 1.5rem;
+  --touch-min: 2.75rem;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-pill-visible-bg: var(--pill-visible-bg);
+  --color-pill-visible-fg: var(--pill-visible-fg);
+  --color-pill-hidden-bg: var(--pill-hidden-bg);
+  --color-pill-hidden-fg: var(--pill-hidden-fg);
+  --color-pill-home-bg: var(--pill-home-bg);
+  --color-pill-home-fg: var(--pill-home-fg);
+  --color-danger: var(--danger);
+  --color-danger-hover: var(--danger-hover);
   --font-sans: var(--font-cairo), ui-sans-serif, system-ui, sans-serif;
+  --radius-card: var(--radius);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+}
+
+@layer components {
+  .btn-primary {
+    display: inline-flex;
+    min-height: var(--touch-min);
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.5rem;
+    background: var(--primary);
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primary-foreground);
+    transition: background-color 150ms ease;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: var(--primary-hover);
+  }
+
+  .btn-primary:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    min-height: var(--touch-min);
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--foreground);
+    transition: background-color 150ms ease;
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    background: var(--background);
+  }
+
+  .btn-ghost {
+    display: inline-flex;
+    min-height: var(--touch-min);
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.5rem;
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--muted);
+    transition: background-color 150ms ease, color 150ms ease;
+  }
+
+  .btn-ghost:hover:not(:disabled) {
+    background: var(--background);
+    color: var(--foreground);
+  }
+
+  .btn-danger {
+    display: inline-flex;
+    min-height: var(--touch-min);
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.5rem;
+    background: var(--danger);
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: white;
+    transition: background-color 150ms ease;
+  }
+
+  .btn-danger:hover:not(:disabled) {
+    background: var(--danger-hover);
+  }
+
+  .card-surface {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: 0 1px 2px rgb(15 23 42 / 0.04);
+  }
+
+  .field-input {
+    width: 100%;
+    min-height: var(--touch-min);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: var(--surface);
+    padding: 0.625rem 0.875rem;
+    font-size: 0.9375rem;
+    color: var(--foreground);
+    outline: none;
+    transition: border-color 150ms ease, box-shadow 150ms ease;
+  }
+
+  .field-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgb(217 119 6 / 0.2);
+  }
+
+  .field-input:disabled {
+    background: var(--background);
+    color: var(--muted);
+    cursor: not-allowed;
+  }
 }

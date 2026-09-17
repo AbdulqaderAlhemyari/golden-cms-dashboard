@@ -242,19 +242,20 @@ Implement in order. Dashboard phases assume matching API phases from `01-api-bac
 
 ---
 
-### Phase 1 — Design system & shell components
+### Phase 1 — Design system & shell components ✅ COMPLETE
 
 **Goal:** Reusable UI building blocks — calm, spacious, non-technical.
 
-- [ ] `Sidebar.tsx` — full locked nav tree
-- [ ] `TopBar.tsx` — title, `LanguageTabs`, **حفظ** button slot
-- [ ] `UpdateWebsiteButton.tsx` — with help text under button
-- [ ] `StatusPill.tsx`, `ConfirmDialog.tsx`, toast setup
-- [ ] Form primitives: `TextField`, `TextArea`, `Switch` (friendly labels)
-- [ ] Tailwind tokens: spacing, card, primary button, pill colors (green/gray/accent)
-- [ ] Empty state component with Arabic messages from glossary
+- [x] `Sidebar.tsx` — full locked nav tree
+- [x] `TopBar.tsx` — title, `LanguageTabs`, **حفظ** button slot
+- [x] `UpdateWebsiteButton.tsx` — with help text under button
+- [x] `StatusPill.tsx`, `ConfirmDialog.tsx`, toast setup
+- [x] Form primitives: `TextField`, `TextArea`, `Switch` (friendly labels)
+- [x] Tailwind tokens: spacing, card, primary button, pill colors (green/gray/accent)
+- [x] Empty state component with Arabic messages from glossary
 
-**Done when:** static shell navigates between placeholder pages with correct Arabic labels.
+**Done when:** static shell navigates between placeholder pages with correct Arabic labels.  
+**Completed:** Phase 1 design system + placeholder routes navigate with Arabic labels.
 
 ---
 
