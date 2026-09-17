@@ -410,17 +410,18 @@ Implement in order. Dashboard phases assume matching API phases from `01-api-bac
 
 ---
 
-### Phase 9 — Photos & files library
+### Phase 9 — Photos & files library ✅ COMPLETE
 
 **Goal:** Standalone media management.
 
-- [ ] `/media` — grid of thumbnails
-- [ ] **إضافة صورة** upload (multipart to API)
-- [ ] Search/filter optional
-- [ ] Click image → side panel: preview, **وصف قصير للصورة** (AR/EN tabs), **حذف** if unused
-- [ ] Never display disk path — filename only if needed
+- [x] `/media` — grid of thumbnails
+- [x] **إضافة صورة** upload (multipart to API)
+- [x] Search/filter optional
+- [x] Click image → side panel: preview, **وصف قصير للصورة** (AR/EN tabs), **حذف** if unused
+- [x] Never display disk path — filename only if needed
 
-**Done when:** upload from library works; images selectable from `ImageField` modal picker.
+**Done when:** upload from library works; images selectable from `ImageField` modal picker.  
+**Completed:** Phase 9 media library + ImageField / SingleImageUpload picker modal.
 
 ---
 

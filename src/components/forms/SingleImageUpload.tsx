@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { MediaPickerModal } from "@/components/media/MediaPickerModal";
 import { uploadMedia } from "@/lib/api/media";
 import type { MediaRef } from "@/lib/pages/types";
 import { copy } from "@/lib/copy/ar";
@@ -35,6 +36,7 @@ export function SingleImageUpload({
   folder = "services",
 }: SingleImageUploadProps) {
   const [uploading, setUploading] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const id = mediaId(value);
   const url = mediaUrl(value);
 
@@ -68,12 +70,19 @@ export function SingleImageUpload({
         </div>
       )}
       <div className="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          className="btn-secondary"
+          onClick={() => setPickerOpen(true)}
+        >
+          {copy.chooseFromLibrary}
+        </button>
         <label className="btn-secondary cursor-pointer">
           {uploading
             ? copy.uploadingPhoto
             : id
               ? copy.changePhoto
-              : copy.addPhoto}
+              : copy.uploadNewPhoto}
           <input
             type="file"
             accept="image/jpeg,image/png,image/webp,image/gif"
@@ -98,6 +107,12 @@ export function SingleImageUpload({
       {helpText ? (
         <p className="text-xs leading-relaxed text-muted">{helpText}</p>
       ) : null}
+
+      <MediaPickerModal
+        open={pickerOpen}
+        onClose={() => setPickerOpen(false)}
+        onSelect={(media) => onChange({ id: media.id, url: media.url })}
+      />
     </div>
   );
 }

@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { MediaPickerModal } from "@/components/media/MediaPickerModal";
 import { copy } from "@/lib/copy/ar";
 import { fields } from "@/lib/copy/fields";
 import type { MediaRef } from "@/lib/pages/types";
@@ -28,6 +30,7 @@ export function ImageField({
   value,
   onChange,
 }: ImageFieldProps) {
+  const [pickerOpen, setPickerOpen] = useState(false);
   const id = mediaId(value);
   const url = mediaUrl(value);
 
@@ -47,16 +50,13 @@ export function ImageField({
         </div>
       )}
       <div className="flex flex-wrap items-center gap-2">
-        <input
-          className="field-input max-w-sm"
-          placeholder={fields.mediaIdPlaceholder}
-          value={id}
-          onChange={(e) => {
-            const next = e.target.value.trim();
-            onChange(next ? next : null);
-          }}
-          aria-label={id ? copy.changePhoto : copy.addPhoto}
-        />
+        <button
+          type="button"
+          className="btn-secondary"
+          onClick={() => setPickerOpen(true)}
+        >
+          {id ? copy.changePhoto : copy.chooseFromLibrary}
+        </button>
         {id ? (
           <button
             type="button"
@@ -70,6 +70,14 @@ export function ImageField({
       {helpText ? (
         <p className="text-xs leading-relaxed text-muted">{helpText}</p>
       ) : null}
+
+      <MediaPickerModal
+        open={pickerOpen}
+        onClose={() => setPickerOpen(false)}
+        onSelect={(media) =>
+          onChange({ id: media.id, url: media.url })
+        }
+      />
     </div>
   );
 }

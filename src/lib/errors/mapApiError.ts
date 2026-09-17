@@ -37,6 +37,10 @@ export function mapApiError(error: unknown): string {
         return copy.connectionFailed;
       case "SLUG_TAKEN":
         return copy.slugTaken;
+      case "MEDIA_IN_USE":
+        return copy.mediaInUse;
+      case "MEDIA_NOT_FOUND":
+        return copy.mediaNotFound;
       case "REVALIDATE_FAILED":
         return copy.updateWebsiteFailure;
       default:
