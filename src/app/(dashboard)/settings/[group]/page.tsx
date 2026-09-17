@@ -1,8 +1,6 @@
 import { notFound } from "next/navigation";
-import { PlaceholderScreen } from "@/components/shell/PlaceholderScreen";
-import { copy } from "@/lib/copy/ar";
+import { SettingsGroupView } from "@/components/settings/SettingsGroupView";
 import {
-  getPageTitle,
   settingsGroups,
   type SettingsGroup,
 } from "@/lib/nav";
@@ -11,18 +9,12 @@ type PageProps = {
   params: Promise<{ group: string }>;
 };
 
-export default async function SettingsPlaceholder({ params }: PageProps) {
+export default async function SettingsGroupPage({ params }: PageProps) {
   const { group } = await params;
 
   if (!settingsGroups.includes(group as SettingsGroup)) {
     notFound();
   }
 
-  const title = getPageTitle(`/settings/${group}`);
-
-  return (
-    <PlaceholderScreen
-      description={`«${title}» — ${copy.settingsComingSoon}`}
-    />
-  );
+  return <SettingsGroupView group={group as SettingsGroup} />;
 }

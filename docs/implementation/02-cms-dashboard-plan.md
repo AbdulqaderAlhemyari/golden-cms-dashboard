@@ -425,32 +425,33 @@ Implement in order. Dashboard phases assume matching API phases from `01-api-bac
 
 ---
 
-### Phase 10 — Company info & settings
+### Phase 10 — Company info & settings ✅ COMPLETE
 
 **Goal:** Global values in friendly sub-screens.
 
 **الشعار واسم الموقع:**
-- [ ] Logo, favicon, site name (AR/EN tabs for text fields)
+- [x] Logo, favicon, site name (AR/EN tabs for text fields)
 
 **الهاتف والبريد والعنوان:**
-- [ ] phone, email, WhatsApp, address AR/EN, tax, commercial register
-- [ ] Help: *«يُستخدم في كل أماكن ظهور بيانات التواصل في الموقع.»*
+- [x] phone, email, WhatsApp, address AR/EN, tax, commercial register
+- [x] Help: *«يُستخدم في كل أماكن ظهور بيانات التواصل في الموقع.»*
 
 **قائمة الموقع:**
-- [ ] Two blocks: **قائمة أعلى الموقع** / **قائمة أسفل الموقع**
-- [ ] Fixed 5 items — edit **label** (AR/EN tab) + **order** only; href read-only or hidden
-- [ ] No add/remove links in v1
+- [x] Two blocks: **قائمة أعلى الموقع** / **قائمة أسفل الموقع**
+- [x] Fixed 5 items — edit **label** (AR/EN tab) + **order** only; href read-only or hidden
+- [x] No add/remove links in v1
 
 **حسابات التواصل:**
-- [ ] Platform name + URL fields
+- [x] Platform name + URL fields
 
 **شريط تواصل معنا:**
-- [ ] Enable switch, title, body, button labels (AR/EN tabs)
+- [x] Enable switch, title, body, button labels (AR/EN tabs)
 
 **مظهر البحث في جوجل:**
-- [ ] Default meta title, description, image
+- [x] Default meta title, description, image
 
-**Done when:** changing phone in settings persists via API.
+**Done when:** changing phone in settings persists via API.  
+**Completed:** Phase 10 settings groups + menu editor (mock or API).
 
 ---
 
