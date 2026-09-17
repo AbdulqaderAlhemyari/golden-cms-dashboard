@@ -340,23 +340,24 @@ Implement in order. Dashboard phases assume matching API phases from `01-api-bac
 
 ---
 
-### Phase 6 — Projects list & create
+### Phase 6 — Projects list & create ✅ COMPLETE
 
 **Goal:** Card-based project management — easiest path for editors.
 
 **List (`/projects`):**
-- [ ] Card grid: cover, title, status pills
-- [ ] Search by title
-- [ ] Filters: **ظاهر في الموقع** / **مخفي** / **في الرئيسية**
-- [ ] **إضافة مشروع** → `/projects/new`
-- [ ] Card actions: **تعديل**, **عرض في الموقع**, toggle hide/show
+- [x] Card grid: cover, title, status pills
+- [x] Search by title
+- [x] Filters: **ظاهر في الموقع** / **مخفي** / **في الرئيسية**
+- [x] **إضافة مشروع** → `/projects/new`
+- [x] Card actions: **تعديل**, **عرض في الموقع**, toggle hide/show
 
 **Create (`/projects/new`):**
-- [ ] Step-light flow on one page: name → photos → basics → description
-- [ ] Default **مخفي** after first save
-- [ ] **رابط الصفحة** under **المزيد من الخيارات**, auto-generated
+- [x] Step-light flow on one page: name → photos → basics → description
+- [x] Default **مخفي** after first save
+- [x] **رابط الصفحة** under **المزيد من الخيارات**, auto-generated
 
-**Done when:** list renders from API; create saves draft project.
+**Done when:** list renders from API; create saves draft project.  
+**Completed:** Phase 6 projects list/create; edit UI deferred to Phase 7 placeholder.
 
 ---
 

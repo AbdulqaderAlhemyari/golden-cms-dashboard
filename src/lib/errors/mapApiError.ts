@@ -35,8 +35,8 @@ export function mapApiError(error: unknown): string {
         return copy.wrongLogin;
       case "FORBIDDEN_ORIGIN":
         return copy.connectionFailed;
-      case "VALIDATION_ERROR":
-        return copy.saveFailed;
+      case "SLUG_TAKEN":
+        return copy.slugTaken;
       case "REVALIDATE_FAILED":
         return copy.updateWebsiteFailure;
       default:
