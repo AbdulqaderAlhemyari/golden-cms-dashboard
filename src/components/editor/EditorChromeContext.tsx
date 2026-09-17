@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -19,36 +20,95 @@ export type EditorChromeState = {
   save: () => void;
 };
 
-type EditorChromeContextValue = {
-  chrome: EditorChromeState | null;
-  register: (state: Omit<EditorChromeState, "active"> | null) => void;
+type RegisterPayload = {
+  locale: ContentLocale;
+  setLocale: (locale: ContentLocale) => void;
+  dirty: boolean;
+  saving: boolean;
+  save: () => void;
 };
 
-const EditorChromeContext = createContext<EditorChromeContextValue | null>(
-  null,
-);
+type RegisterContextValue = {
+  register: (state: RegisterPayload | null) => void;
+};
 
+const RegisterContext = createContext<RegisterContextValue | null>(null);
+const ChromeContext = createContext<EditorChromeState | null>(null);
+
+/**
+ * Outer shell keeps `children` referentially stable so chrome state updates
+ * inside the inner provider do not re-render the whole dashboard tree.
+ */
 export function EditorChromeProvider({ children }: { children: ReactNode }) {
+  return <EditorChromeProviderInner>{children}</EditorChromeProviderInner>;
+}
+
+function EditorChromeProviderInner({ children }: { children: ReactNode }) {
   const [chrome, setChrome] = useState<EditorChromeState | null>(null);
 
+  // Callbacks live in a ref so register() only commits React state when
+  // locale / dirty / saving change — not when save/setLocale identities churn.
+  const callbacksRef = useRef<{
+    setLocale: (locale: ContentLocale) => void;
+    save: () => void;
+  }>({
+    setLocale: () => undefined,
+    save: () => undefined,
+  });
+
+  const stableSetLocale = useCallback((locale: ContentLocale) => {
+    callbacksRef.current.setLocale(locale);
+  }, []);
+
+  const stableSave = useCallback(() => {
+    callbacksRef.current.save();
+  }, []);
+
   const register = useCallback(
-    (state: Omit<EditorChromeState, "active"> | null) => {
-      setChrome(state ? { ...state, active: true } : null);
+    (state: RegisterPayload | null) => {
+      if (state === null) {
+        setChrome((prev) => (prev === null ? prev : null));
+        return;
+      }
+
+      callbacksRef.current = {
+        setLocale: state.setLocale,
+        save: state.save,
+      };
+
+      setChrome((prev) => {
+        if (
+          prev &&
+          prev.locale === state.locale &&
+          prev.dirty === state.dirty &&
+          prev.saving === state.saving
+        ) {
+          return prev;
+        }
+        return {
+          active: true,
+          locale: state.locale,
+          dirty: state.dirty,
+          saving: state.saving,
+          setLocale: stableSetLocale,
+          save: stableSave,
+        };
+      });
     },
-    [],
+    [stableSave, stableSetLocale],
   );
 
-  const value = useMemo(() => ({ chrome, register }), [chrome, register]);
+  const registerValue = useMemo(() => ({ register }), [register]);
 
   return (
-    <EditorChromeContext.Provider value={value}>
-      {children}
-    </EditorChromeContext.Provider>
+    <RegisterContext.Provider value={registerValue}>
+      <ChromeContext.Provider value={chrome}>{children}</ChromeContext.Provider>
+    </RegisterContext.Provider>
   );
 }
 
-export function useEditorChrome(): EditorChromeContextValue {
-  const ctx = useContext(EditorChromeContext);
+export function useEditorChrome(): RegisterContextValue {
+  const ctx = useContext(RegisterContext);
   if (!ctx) {
     throw new Error("useEditorChrome must be used within EditorChromeProvider");
   }
@@ -56,5 +116,5 @@ export function useEditorChrome(): EditorChromeContextValue {
 }
 
 export function useOptionalEditorChrome(): EditorChromeState | null {
-  return useContext(EditorChromeContext)?.chrome ?? null;
+  return useContext(ChromeContext);
 }

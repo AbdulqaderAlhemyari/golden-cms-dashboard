@@ -155,9 +155,12 @@ export function NewProjectForm() {
       saving: mutation.isPending,
       save,
     });
-    return () => register(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- save identity changes often; register latest via closure
   }, [locale, dirty, mutation.isPending, register, fieldsByLocale, year, featured, photoIds, slug, slugTouched]);
+
+  useEffect(() => {
+    return () => register(null);
+  }, [register]);
 
   return (
     <>

@@ -86,10 +86,11 @@ export function useMenuEditor() {
     onError: (error) => toast.error(mapApiError(error)),
   });
 
+  const saving = mutation.isPending;
+
   const save = useCallback(() => {
-    if (mutation.isPending) return;
     mutation.mutate();
-  }, [mutation]);
+  }, [mutation.mutate]);
 
   const setLocale = useCallback(
     (next: ContentLocale) => {
@@ -103,16 +104,24 @@ export function useMenuEditor() {
     [dirty, locale],
   );
 
+  const saveRef = useRef(save);
+  const setLocaleRef = useRef(setLocale);
+  saveRef.current = save;
+  setLocaleRef.current = setLocale;
+
   useEffect(() => {
     register({
       locale,
-      setLocale,
       dirty,
-      saving: mutation.isPending,
-      save,
+      saving,
+      setLocale: (next) => setLocaleRef.current(next),
+      save: () => saveRef.current(),
     });
+  }, [register, locale, dirty, saving]);
+
+  useEffect(() => {
     return () => register(null);
-  }, [register, locale, setLocale, dirty, mutation.isPending, save]);
+  }, [register]);
 
   const updateLabel = useCallback(
     (location: MenuLocation, index: number, label: string) => {
@@ -163,7 +172,7 @@ export function useMenuEditor() {
     reorder,
     dirty,
     save,
-    saving: mutation.isPending,
+    saving,
     loading: query.isLoading || !ready,
     error: query.error,
     reload: () => void query.refetch(),

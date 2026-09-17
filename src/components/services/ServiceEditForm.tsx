@@ -196,9 +196,12 @@ export function ServiceEditForm({ serviceId }: ServiceEditFormProps) {
       saving: saveMutation.isPending,
       save: () => saveMutation.mutate(),
     });
-    return () => register(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [register, locale, dirty, saveMutation.isPending]);
+
+  useEffect(() => {
+    return () => register(null);
+  }, [register]);
 
   if (query.isLoading) {
     return (

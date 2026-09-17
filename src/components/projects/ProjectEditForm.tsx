@@ -254,9 +254,12 @@ export function ProjectEditForm({ projectId }: ProjectEditFormProps) {
       saving: saveMutation.isPending,
       save,
     });
-    return () => register(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [register, locale, dirty, saveMutation.isPending]);
+
+  useEffect(() => {
+    return () => register(null);
+  }, [register]);
 
   if (query.isLoading) {
     return (

@@ -61,10 +61,11 @@ export function useSettingsEditor<T extends object>(
     onError: (error) => toast.error(mapApiError(error)),
   });
 
+  const saving = mutation.isPending;
+
   const save = useCallback(() => {
-    if (mutation.isPending) return;
     mutation.mutate();
-  }, [mutation]);
+  }, [mutation.mutate]);
 
   const setLocale = useCallback(
     (next: ContentLocale) => {
@@ -78,16 +79,24 @@ export function useSettingsEditor<T extends object>(
     [dirty, locale],
   );
 
+  const saveRef = useRef(save);
+  const setLocaleRef = useRef(setLocale);
+  saveRef.current = save;
+  setLocaleRef.current = setLocale;
+
   useEffect(() => {
     register({
       locale,
-      setLocale,
       dirty,
-      saving: mutation.isPending,
-      save,
+      saving,
+      setLocale: (next) => setLocaleRef.current(next),
+      save: () => saveRef.current(),
     });
+  }, [register, locale, dirty, saving]);
+
+  useEffect(() => {
     return () => register(null);
-  }, [register, locale, setLocale, dirty, mutation.isPending, save]);
+  }, [register]);
 
   return {
     locale,
@@ -96,7 +105,7 @@ export function useSettingsEditor<T extends object>(
     setDraft,
     dirty,
     save,
-    saving: mutation.isPending,
+    saving,
     loading: query.isLoading || !ready,
     error: query.error,
     reload: () => void query.refetch(),
