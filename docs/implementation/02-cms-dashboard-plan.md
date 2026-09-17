@@ -311,31 +311,32 @@ Implement in order. Dashboard phases assume matching API phases from `01-api-bac
 
 ---
 
-### Phase 5 — Page editors (all fixed pages)
+### Phase 5 — Page editors (all fixed pages) ✅ COMPLETE
 
 **Goal:** Every website page editable.
 
 **Home (`/pages/home`):**
-- [ ] Sections: banner (title, subtitle, image, 2 buttons with `PageLinkSelect`), features list, why choose us, featured projects labels
-- [ ] Image fields use `ImageField` → media upload or picker
+- [x] Sections: banner (title, subtitle, image, 2 buttons with `PageLinkSelect`), features list, why choose us, featured projects labels
+- [x] Image fields use `ImageField` → media upload or picker
 
 **About (`/pages/about`):**
-- [ ] about_us (text + image), vision, mission, values repeater, sectors repeater with enable switch
-- [ ] IconPicker for value/sector icons
+- [x] about_us (text + image), vision, mission, values repeater, sectors repeater with enable switch
+- [x] IconPicker for value/sector icons
 
 **Services page intro (`/pages/services`):**
-- [ ] Title + SEO + prominent link card → `/services`
+- [x] Title + SEO + prominent link card → `/services`
 
 **Projects page intro (`/pages/projects`):**
-- [ ] Title, intro, SEO + link card → `/projects`
+- [x] Title, intro, SEO + link card → `/projects`
 
 **Contact (`/pages/contact`):**
-- [ ] Intro, form labels, business hours — **not** phone/email values
+- [x] Intro, form labels, business hours — **not** phone/email values
 
 **Terms (`/pages/terms`):**
-- [ ] Rich text body + SEO
+- [x] Rich text body + SEO
 
-**Done when:** all six page routes load/save both `ar` and `en` via API.
+**Done when:** all six page routes load/save both `ar` and `en` via API.  
+**Completed:** Phase 5 all six page editors wired (mock or API); ImageField id entry until Phase 9 picker.
 
 ---
 

@@ -1,5 +1,7 @@
 "use client";
 
+import { ImageField } from "@/components/forms/ImageField";
+import { PageLinkSelect } from "@/components/forms/PageLinkSelect";
 import { TextArea } from "@/components/forms/TextArea";
 import { TextField } from "@/components/forms/TextField";
 import { fields } from "@/lib/copy/fields";
@@ -18,12 +20,6 @@ type Props = {
   value: BannerSectionValue;
   onChange: (value: BannerSectionValue) => void;
 };
-
-function mediaToInput(image: MediaRef | undefined): string {
-  if (!image) return "";
-  if (typeof image === "string") return image;
-  return image.id ?? "";
-}
 
 export function HomeBannerSection({ value, onChange }: Props) {
   const current = value ?? {};
@@ -55,18 +51,11 @@ export function HomeBannerSection({ value, onChange }: Props) {
         value={current.subtitle ?? ""}
         onChange={(e) => onChange({ ...current, subtitle: e.target.value })}
       />
-      <TextField
+      <ImageField
         label={fields.banner.image}
-        name="banner-image"
         helpText={fields.banner.imageHelp}
-        placeholder={fields.mediaIdPlaceholder}
-        value={mediaToInput(current.image)}
-        onChange={(e) =>
-          onChange({
-            ...current,
-            image: e.target.value.trim() ? e.target.value.trim() : null,
-          })
-        }
+        value={current.image}
+        onChange={(image) => onChange({ ...current, image })}
       />
       <div className="grid gap-4 sm:grid-cols-2">
         <TextField
@@ -75,11 +64,10 @@ export function HomeBannerSection({ value, onChange }: Props) {
           value={button1.label}
           onChange={(e) => setButton(0, { label: e.target.value })}
         />
-        <TextField
+        <PageLinkSelect
           label={fields.banner.button1Href}
-          name="banner-btn1-href"
           value={button1.href}
-          onChange={(e) => setButton(0, { href: e.target.value })}
+          onChange={(href) => setButton(0, { href })}
         />
         <TextField
           label={fields.banner.button2Label}
@@ -87,11 +75,10 @@ export function HomeBannerSection({ value, onChange }: Props) {
           value={button2.label}
           onChange={(e) => setButton(1, { label: e.target.value })}
         />
-        <TextField
+        <PageLinkSelect
           label={fields.banner.button2Href}
-          name="banner-btn2-href"
           value={button2.href}
-          onChange={(e) => setButton(1, { href: e.target.value })}
+          onChange={(href) => setButton(1, { href })}
         />
       </div>
     </div>

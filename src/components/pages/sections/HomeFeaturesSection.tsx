@@ -1,5 +1,6 @@
 "use client";
 
+import { IconPicker } from "@/components/forms/IconPicker";
 import { TextArea } from "@/components/forms/TextArea";
 import { TextField } from "@/components/forms/TextField";
 import { fields } from "@/lib/copy/fields";
@@ -86,6 +87,10 @@ export function HomeFeaturesSection({ value, onChange }: Props) {
               name={`feature-content-${index}`}
               value={item.content}
               onChange={(e) => updateItem(index, { content: e.target.value })}
+            />
+            <IconPicker
+              value={item.icon}
+              onChange={(icon) => updateItem(index, { icon })}
             />
             <button
               type="button"

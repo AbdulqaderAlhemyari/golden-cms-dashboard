@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { PageEditorLinkCard } from "@/components/pages/PageEditorLinkCard";
 import { usePageEditor } from "@/hooks/usePageEditor";
 import { cn } from "@/lib/cn";
 import { copy } from "@/lib/copy/ar";
@@ -15,7 +16,8 @@ type PageEditorProps = {
 
 export function PageEditor({ pageKey }: PageEditorProps) {
   const sections = pageSectionRegistry[pageKey] ?? [];
-  const firstKey = sections.find((s) => !s.collapsedByDefault)?.key ?? sections[0]?.key;
+  const firstKey =
+    sections.find((s) => !s.collapsedByDefault)?.key ?? sections[0]?.key;
   const [activeKey, setActiveKey] = useState<string | null>(firstKey ?? null);
 
   const {
@@ -52,7 +54,11 @@ export function PageEditor({ pageKey }: PageEditorProps) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-4 p-8">
         <p className="text-danger">{mapApiError(error)}</p>
-        <button type="button" className="btn-secondary" onClick={() => void reload()}>
+        <button
+          type="button"
+          className="btn-secondary"
+          onClick={() => void reload()}
+        >
           {copy.confirm}
         </button>
       </div>
@@ -60,42 +66,49 @@ export function PageEditor({ pageKey }: PageEditorProps) {
   }
 
   const ActiveForm = activeSection?.component;
+  const showListLink =
+    pageKey === "services_index" || pageKey === "projects_index";
 
   return (
     <>
       {unsavedDialog}
       <div className="flex flex-1 flex-col gap-6 p-6 md:flex-row md:p-8">
-        <aside className="w-full shrink-0 md:w-64">
-          <p className="mb-3 text-sm font-semibold text-foreground">
-            {fields.sectionsHeading}
-          </p>
-          <nav className="space-y-1">
-            {sections.map((section) => {
-              const isActive = section.key === activeSection?.key;
-              return (
-                <button
-                  key={section.key}
-                  type="button"
-                  onClick={() => setActiveKey(section.key)}
-                  className={cn(
-                    "w-full rounded-lg px-3 py-3 text-start text-sm transition-colors",
-                    isActive
-                      ? "bg-orange-50 font-semibold text-primary"
-                      : "text-slate-700 hover:bg-slate-100",
-                  )}
-                >
-                  {section.titleAr}
-                  {section.collapsedByDefault ? (
-                    <span className="mt-0.5 block text-xs font-normal text-muted">
-                      {copy.moreOptions}
-                    </span>
-                  ) : null}
-                </button>
-              );
-            })}
-          </nav>
+        <aside className="w-full shrink-0 space-y-4 md:w-64">
+          <div>
+            <p className="mb-3 text-sm font-semibold text-foreground">
+              {fields.sectionsHeading}
+            </p>
+            <nav className="space-y-1">
+              {sections.map((section) => {
+                const isActive = section.key === activeSection?.key;
+                return (
+                  <button
+                    key={section.key}
+                    type="button"
+                    onClick={() => setActiveKey(section.key)}
+                    className={cn(
+                      "w-full rounded-lg px-3 py-3 text-start text-sm transition-colors",
+                      isActive
+                        ? "bg-orange-50 font-semibold text-primary"
+                        : "text-slate-700 hover:bg-slate-100",
+                    )}
+                  >
+                    {section.titleAr}
+                    {section.collapsedByDefault ? (
+                      <span className="mt-0.5 block text-xs font-normal text-muted">
+                        {copy.moreOptions}
+                      </span>
+                    ) : null}
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
+
+          {showListLink ? <PageEditorLinkCard pageKey={pageKey} /> : null}
+
           {dirty ? (
-            <p className="mt-4 text-xs text-primary">
+            <p className="text-xs text-primary">
               {saving ? copy.saving : copy.unsavedHint}
             </p>
           ) : null}

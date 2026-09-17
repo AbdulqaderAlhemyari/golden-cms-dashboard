@@ -19,17 +19,16 @@ export const sectionTitles = {
     seo: "مظهر البحث في جوجل",
   },
   services_index: {
-    ui: "عنوان الصفحة",
+    ui: "نصوص صفحة الخدمات",
     seo: "مظهر البحث في جوجل",
   },
   projects_index: {
-    intro: "مقدمة",
+    intro: "مقدمة صفحة المشاريع",
     seo: "مظهر البحث في جوجل",
   },
   contact: {
     intro: "مقدمة",
     form: "تسميات نموذج التواصل",
-    details: "تفاصيل التواصل (تسميات)",
     business_hours: "ساعات العمل",
     seo: "مظهر البحث في جوجل",
   },
