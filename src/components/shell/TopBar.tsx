@@ -1,25 +1,43 @@
 "use client";
 
-import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { toast } from "sonner";
+import { useOptionalEditorChrome } from "@/components/editor/EditorChromeContext";
 import { LanguageTabs, type ContentLocale } from "@/components/shell/LanguageTabs";
 import { UpdateWebsiteButton } from "@/components/shell/UpdateWebsiteButton";
 import { copy } from "@/lib/copy/ar";
 import { getPageTitle, isEditorRoute } from "@/lib/nav";
+import { useState } from "react";
 
 export function TopBar() {
   const pathname = usePathname();
   const title = getPageTitle(pathname);
   const showEditorControls = isEditorRoute(pathname);
-  const [locale, setLocale] = useState<ContentLocale>("ar");
-  const [saving, setSaving] = useState(false);
+  const editorChrome = useOptionalEditorChrome();
+
+  const [fallbackLocale, setFallbackLocale] = useState<ContentLocale>("ar");
+  const [fallbackSaving, setFallbackSaving] = useState(false);
+
+  const locale = editorChrome?.locale ?? fallbackLocale;
+  const saving = editorChrome?.saving ?? fallbackSaving;
 
   async function handleSave() {
-    setSaving(true);
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    setSaving(false);
+    if (editorChrome) {
+      editorChrome.save();
+      return;
+    }
+    setFallbackSaving(true);
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    setFallbackSaving(false);
     toast.success(copy.saved);
+  }
+
+  function handleLocaleChange(next: ContentLocale) {
+    if (editorChrome) {
+      editorChrome.setLocale(next);
+      return;
+    }
+    setFallbackLocale(next);
   }
 
   return (
@@ -28,17 +46,20 @@ export function TopBar() {
         <h1 className="truncate text-xl font-bold text-foreground md:text-2xl">
           {title}
         </h1>
+        {editorChrome?.dirty ? (
+          <p className="mt-1 text-xs text-primary">{copy.unsavedHint}</p>
+        ) : null}
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
         <UpdateWebsiteButton variant="compact" />
         {showEditorControls ? (
           <>
-            <LanguageTabs value={locale} onChange={setLocale} />
+            <LanguageTabs value={locale} onChange={handleLocaleChange} />
             <button
               type="button"
               className="btn-primary"
-              onClick={handleSave}
+              onClick={() => void handleSave()}
               disabled={saving}
             >
               {saving ? copy.saving : copy.save}

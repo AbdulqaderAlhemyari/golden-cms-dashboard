@@ -294,19 +294,20 @@ Implement in order. Dashboard phases assume matching API phases from `01-api-bac
 
 ---
 
-### Phase 4 — Shared page editor framework
+### Phase 4 — Shared page editor framework ✅ COMPLETE
 
 **Goal:** One pattern for all fixed pages.
 
-- [ ] `PageEditor` layout: section accordion + `LanguageTabs` + **حفظ**
-- [ ] `usePageEditor(pageKey)` hook — TanStack Query get + patch mutation
-- [ ] `useUnsavedChanges` guard
-- [ ] Section registry: `pageKey → [{ key, titleAr, component }]`
-- [ ] SEO section component (collapsed): Google title + description + image
-- [ ] Save success toast **تم الحفظ**
-- [ ] Map API section payloads ↔ form default values per locale tab
+- [x] `PageEditor` layout: section accordion + `LanguageTabs` + **حفظ**
+- [x] `usePageEditor(pageKey)` hook — TanStack Query get + patch mutation
+- [x] `useUnsavedChanges` guard
+- [x] Section registry: `pageKey → [{ key, titleAr, component }]`
+- [x] SEO section component (collapsed): Google title + description + image
+- [x] Save success toast **تم الحفظ**
+- [x] Map API section payloads ↔ form default values per locale tab
 
-**Done when:** framework works with one test page (home) end-to-end.
+**Done when:** framework works with one test page (home) end-to-end.  
+**Completed:** Phase 4 page editor framework; `/pages/home` load/edit/save (mock or API).
 
 ---
 
