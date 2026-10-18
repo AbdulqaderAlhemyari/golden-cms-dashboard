@@ -18,7 +18,8 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { toast } from "sonner";
 import { TextField } from "@/components/forms/TextField";
-import { uploadMedia, updateMediaAlt } from "@/lib/api/media";
+import { MediaPickerModal } from "@/components/media/MediaPickerModal";
+import { updateMediaAlt, type MediaItem } from "@/lib/api/media";
 import type { MediaRefObject } from "@/lib/api/projects";
 import { cn } from "@/lib/cn";
 import { copy } from "@/lib/copy/ar";
@@ -124,7 +125,7 @@ export function ImageGallery({
   onCoverChange,
   uploadFolder = "projects",
 }: ImageGalleryProps) {
-  const [uploading, setUploading] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const selected = items.find((i) => i.id === selectedId) ?? null;
 
@@ -132,29 +133,22 @@ export function ImageGallery({
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
   );
 
-  async function onUpload(files: FileList | null) {
-    if (!files?.length) return;
-    setUploading(true);
-    try {
-      const uploaded: GalleryItem[] = [];
-      for (const file of Array.from(files)) {
-        const media = await uploadMedia(file, uploadFolder);
-        uploaded.push({
-          id: media.id,
-          url: media.url,
-          altAr: media.altAr,
-          altEn: media.altEn,
-        });
-      }
-      const next = [...items, ...uploaded];
-      onChange(next);
-      if (!coverId && next[0]) onCoverChange(next[0].id);
-      setSelectedId(uploaded[0]?.id ?? selectedId);
-    } catch (error) {
-      toast.error(mapApiError(error));
-    } finally {
-      setUploading(false);
+  function addFromPicker(media: MediaItem) {
+    if (items.some((item) => item.id === media.id)) {
+      toast.message(copy.mediaAlreadyInGallery);
+      setSelectedId(media.id);
+      return;
     }
+    const nextItem: GalleryItem = {
+      id: media.id,
+      url: media.url,
+      altAr: media.altAr,
+      altEn: media.altEn,
+    };
+    const next = [...items, nextItem];
+    onChange(next);
+    if (!coverId) onCoverChange(nextItem.id);
+    setSelectedId(nextItem.id);
   }
 
   function onDragEnd(event: DragEndEvent) {
@@ -185,20 +179,14 @@ export function ImageGallery({
     <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
       <div className="space-y-4">
         <div className="flex flex-wrap items-center gap-3">
-          <label className="btn-primary cursor-pointer">
-            {uploading ? copy.uploadingPhoto : copy.addPhoto}
-            <input
-              type="file"
-              accept="image/jpeg,image/png,image/webp,image/gif"
-              multiple
-              className="sr-only"
-              disabled={uploading}
-              onChange={(e) => {
-                void onUpload(e.target.files);
-                e.target.value = "";
-              }}
-            />
-          </label>
+          <button
+            type="button"
+            className="btn-primary"
+            onClick={() => setPickerOpen(true)}
+          >
+            {copy.addPhoto}
+          </button>
+          <p className="text-xs text-muted">{copy.addPhotoPickerHint}</p>
         </div>
 
         {items.length === 0 ? (
@@ -281,6 +269,13 @@ export function ImageGallery({
           <p className="text-sm text-muted">{copy.emptyDefault}</p>
         )}
       </aside>
+
+      <MediaPickerModal
+        open={pickerOpen}
+        folder={uploadFolder}
+        onClose={() => setPickerOpen(false)}
+        onSelect={addFromPicker}
+      />
     </div>
   );
 }

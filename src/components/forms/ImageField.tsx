@@ -55,10 +55,10 @@ export function ImageField({
       <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
-          className="btn-secondary"
+          className="btn-primary"
           onClick={() => setPickerOpen(true)}
         >
-          {id ? copy.changePhoto : copy.chooseFromLibrary}
+          {id ? copy.changePhoto : copy.addPhoto}
         </button>
         {id ? (
           <button
@@ -70,9 +70,10 @@ export function ImageField({
           </button>
         ) : null}
       </div>
-      {helpText ? (
-        <p className="text-xs leading-relaxed text-muted">{helpText}</p>
-      ) : null}
+      <p className="text-xs leading-relaxed text-muted">
+        {helpText ? `${helpText} ` : null}
+        {copy.addPhotoPickerHint}
+      </p>
 
       <MediaPickerModal
         open={pickerOpen}

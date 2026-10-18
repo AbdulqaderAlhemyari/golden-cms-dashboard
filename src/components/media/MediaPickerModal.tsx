@@ -165,16 +165,15 @@ export function MediaPickerModal({
         <div
           role="dialog"
           aria-modal="true"
-          aria-label={copy.chooseFromLibrary}
+          aria-label={copy.addPhoto}
           className="card-surface flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden shadow-lg"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3">
             <div className="min-w-0">
-              <p className="font-bold text-foreground">
-                {copy.chooseFromLibrary}
-              </p>
-              <p className="truncate text-xs text-muted">
+              <p className="font-bold text-foreground">{copy.addPhoto}</p>
+              <p className="text-xs text-muted">{copy.addPhotoPickerHint}</p>
+              <p className="mt-1 truncate text-xs font-medium text-foreground">
                 {folder
                   ? folderPathLabel(folder)
                   : copy.mediaAllFolders}
@@ -214,16 +213,10 @@ export function MediaPickerModal({
             </aside>
 
             <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-              <div className="flex flex-wrap gap-3 border-b border-border px-4 py-3">
-                <input
-                  className="field-input max-w-xs"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder={copy.searchMedia}
-                />
+              <div className="flex flex-wrap items-center gap-3 border-b border-border px-4 py-3">
                 <button
                   type="button"
-                  className="btn-secondary"
+                  className="btn-primary"
                   onClick={() => {
                     setUploadError(null);
                     setUploadOpen(true);
@@ -231,6 +224,15 @@ export function MediaPickerModal({
                 >
                   {copy.uploadNewPhoto}
                 </button>
+                <input
+                  className="field-input max-w-xs"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder={copy.searchMedia}
+                />
+                <p className="text-xs text-muted">
+                  {copy.chooseFromLibrary}
+                </p>
               </div>
 
               <div className="min-h-0 flex-1 overflow-y-auto p-4">

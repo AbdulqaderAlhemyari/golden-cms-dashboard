@@ -182,6 +182,9 @@ export const copy = {
   mediaDeleted: "تم حذف الصورة.",
   chooseFromLibrary: "اختيار من المكتبة",
   uploadNewPhoto: "رفع صورة جديدة",
+  addPhotoPickerHint:
+    "يمكنك اختيار صورة من المجلدات أو رفع صورة جديدة مع الاسم والوصف.",
+  mediaAlreadyInGallery: "هذه الصورة موجودة بالفعل في المعرض.",
   selectPhoto: "اختيار هذه الصورة",
   mediaLibraryTitle: "الصور والملفات",
   closePanel: "إغلاق",

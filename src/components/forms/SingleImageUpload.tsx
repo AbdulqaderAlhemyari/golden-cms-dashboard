@@ -1,13 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { toast } from "sonner";
 import { MediaPickerModal } from "@/components/media/MediaPickerModal";
-import { uploadMedia } from "@/lib/api/media";
 import type { MediaRef } from "@/lib/pages/types";
 import { copy } from "@/lib/copy/ar";
 import { fields } from "@/lib/copy/fields";
-import { mapApiError } from "@/lib/errors/mapApiError";
 
 type SingleImageUploadProps = {
   label: string;
@@ -35,24 +32,9 @@ export function SingleImageUpload({
   onChange,
   folder = "services",
 }: SingleImageUploadProps) {
-  const [uploading, setUploading] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const id = mediaId(value);
   const url = mediaUrl(value);
-
-  async function onFile(files: FileList | null) {
-    const file = files?.[0];
-    if (!file) return;
-    setUploading(true);
-    try {
-      const media = await uploadMedia(file, folder);
-      onChange({ id: media.id, url: media.url });
-    } catch (error) {
-      toast.error(mapApiError(error));
-    } finally {
-      setUploading(false);
-    }
-  }
 
   return (
     <div className="space-y-2">
@@ -72,28 +54,11 @@ export function SingleImageUpload({
       <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
-          className="btn-secondary"
+          className="btn-primary"
           onClick={() => setPickerOpen(true)}
         >
-          {copy.chooseFromLibrary}
+          {id ? copy.changePhoto : copy.addPhoto}
         </button>
-        <label className="btn-secondary cursor-pointer">
-          {uploading
-            ? copy.uploadingPhoto
-            : id
-              ? copy.changePhoto
-              : copy.uploadNewPhoto}
-          <input
-            type="file"
-            accept="image/jpeg,image/png,image/webp,image/gif"
-            className="sr-only"
-            disabled={uploading}
-            onChange={(e) => {
-              void onFile(e.target.files);
-              e.target.value = "";
-            }}
-          />
-        </label>
         {id ? (
           <button
             type="button"
@@ -104,9 +69,10 @@ export function SingleImageUpload({
           </button>
         ) : null}
       </div>
-      {helpText ? (
-        <p className="text-xs leading-relaxed text-muted">{helpText}</p>
-      ) : null}
+      <p className="text-xs leading-relaxed text-muted">
+        {helpText ? `${helpText} ` : null}
+        {copy.addPhotoPickerHint}
+      </p>
 
       <MediaPickerModal
         open={pickerOpen}
