@@ -219,6 +219,9 @@ export const copy = {
   contentLanguage: "لغة المحتوى",
   openMenu: "فتح القائمة",
   closeMenu: "إغلاق القائمة",
+  breadcrumbNav: "مسار التنقل",
+  editService: "تعديل الخدمة",
+  editProject: "تعديل المشروع",
 } as const;
 
 export type Copy = typeof copy;

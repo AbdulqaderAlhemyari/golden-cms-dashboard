@@ -4,10 +4,11 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { toast } from "sonner";
 import { useOptionalEditorChrome } from "@/components/editor/EditorChromeContext";
+import { Breadcrumb } from "@/components/shell/Breadcrumb";
 import { LanguageTabs, type ContentLocale } from "@/components/shell/LanguageTabs";
 import { UpdateWebsiteButton } from "@/components/shell/UpdateWebsiteButton";
 import { copy } from "@/lib/copy/ar";
-import { getPageTitle, isEditorRoute } from "@/lib/nav";
+import { getBreadcrumbs, getPageTitle, isEditorRoute } from "@/lib/nav";
 
 type TopBarProps = {
   onOpenMenu?: () => void;
@@ -16,6 +17,7 @@ type TopBarProps = {
 export function TopBar({ onOpenMenu }: TopBarProps) {
   const pathname = usePathname();
   const title = getPageTitle(pathname);
+  const breadcrumbs = getBreadcrumbs(pathname);
   const showEditorControls = isEditorRoute(pathname);
   const editorChrome = useOptionalEditorChrome();
 
@@ -58,6 +60,9 @@ export function TopBar({ onOpenMenu }: TopBarProps) {
           </button>
         ) : null}
         <div className="min-w-0">
+          {breadcrumbs.length > 1 ? (
+            <Breadcrumb items={breadcrumbs} className="mb-1" />
+          ) : null}
           <h1 className="truncate text-xl font-bold text-foreground md:text-2xl">
             {title}
           </h1>
