@@ -71,6 +71,11 @@ export function usePageEditor(pageKey: ApiPageKey) {
         ["page", pageKey, localeRef.current],
         data,
       );
+      // Images/icons sync to the other locale on the API — refresh that cache.
+      const otherLocale = localeRef.current === "ar" ? "en" : "ar";
+      void queryClient.invalidateQueries({
+        queryKey: ["page", pageKey, otherLocale],
+      });
       toast.success(copy.saved);
     },
     onError: (error) => {
