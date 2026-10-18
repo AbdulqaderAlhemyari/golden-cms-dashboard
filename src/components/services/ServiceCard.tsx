@@ -48,11 +48,15 @@ export function ServiceCard({ service, onUpdated }: ServiceCardProps) {
   }
 
   return (
-    <article className="card-surface flex flex-col overflow-hidden">
-      <div className="aspect-[16/10] bg-slate-100">
+    <article className="card-surface flex h-full flex-col overflow-hidden">
+      <div className="relative h-44 w-full shrink-0 overflow-hidden bg-slate-100 sm:h-48">
         {coverUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={coverUrl} alt="" className="h-full w-full object-cover" />
+          <img
+            src={coverUrl}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+          />
         ) : (
           <div className="flex h-full items-center justify-center text-sm text-muted">
             {copy.mainPhoto}
@@ -60,7 +64,9 @@ export function ServiceCard({ service, onUpdated }: ServiceCardProps) {
         )}
       </div>
       <div className="flex flex-1 flex-col gap-3 p-4">
-        <h2 className="text-base font-bold text-foreground">{title}</h2>
+        <h2 className="line-clamp-2 min-h-[2.75rem] text-base font-bold text-foreground">
+          {title}
+        </h2>
         <StatusPill variant={service.draft ? "hidden" : "visible"} />
         <div className="mt-auto flex flex-col gap-2 pt-2">
           <div className="flex flex-wrap gap-2">
