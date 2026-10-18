@@ -110,6 +110,7 @@ export function SingleImageUpload({
 
       <MediaPickerModal
         open={pickerOpen}
+        folder={folder}
         onClose={() => setPickerOpen(false)}
         onSelect={(media) => onChange({ id: media.id, url: media.url })}
       />

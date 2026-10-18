@@ -54,6 +54,7 @@ export function HomeBannerSection({ value, onChange }: Props) {
       <ImageField
         label={fields.banner.image}
         helpText={fields.banner.imageHelp}
+        folder="pages/home"
         value={current.image}
         onChange={(image) => onChange({ ...current, image })}
       />

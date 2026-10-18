@@ -43,6 +43,7 @@ export function AboutUsSection({ value, onChange }: Props) {
         onChange={(e) => onChange({ ...current, content: e.target.value })}
       />
       <ImageField
+        folder="pages/about"
         label={fields.aboutUs.image}
         helpText={fields.aboutUs.imageHelp}
         value={current.image}

@@ -35,6 +35,7 @@ export function SeoSettingsForm() {
       />
       <ImageField
         label={copy.seoDefaultImage}
+        folder="branding"
         value={draft.meta_image}
         onChange={(meta_image) => setDraft({ ...draft, meta_image })}
       />

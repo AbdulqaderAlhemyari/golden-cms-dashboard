@@ -11,6 +11,8 @@ type ImageFieldProps = {
   helpText?: string;
   value: MediaRef | undefined;
   onChange: (value: MediaRef) => void;
+  /** Preferred media folder when opening the picker. */
+  folder?: string;
 };
 
 function mediaId(value: MediaRef | undefined): string {
@@ -29,6 +31,7 @@ export function ImageField({
   helpText,
   value,
   onChange,
+  folder,
 }: ImageFieldProps) {
   const [pickerOpen, setPickerOpen] = useState(false);
   const id = mediaId(value);
@@ -73,6 +76,7 @@ export function ImageField({
 
       <MediaPickerModal
         open={pickerOpen}
+        folder={folder}
         onClose={() => setPickerOpen(false)}
         onSelect={(media) =>
           onChange({ id: media.id, url: media.url })

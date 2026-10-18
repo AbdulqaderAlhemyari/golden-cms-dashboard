@@ -51,11 +51,13 @@ export function SiteSettingsForm() {
       />
       <ImageField
         label={copy.logoImage}
+        folder="branding"
         value={draft.logo}
         onChange={(logo) => setDraft({ ...draft, logo })}
       />
       <ImageField
         label={copy.favicon}
+        folder="branding"
         value={draft.favicon}
         onChange={(favicon) => setDraft({ ...draft, favicon })}
       />
