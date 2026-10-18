@@ -41,6 +41,8 @@ export function mapApiError(error: unknown): string {
         return copy.mediaInUse;
       case "MEDIA_NOT_FOUND":
         return copy.mediaNotFound;
+      case "FEATURED_LIMIT":
+        return copy.featuredLimitError;
       case "REVALIDATE_FAILED":
         return copy.updateWebsiteFailure;
       default:

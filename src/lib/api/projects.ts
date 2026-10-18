@@ -214,6 +214,27 @@ export async function publishProject(
   idOrSlug: string,
 ): Promise<{ project: Project }> {
   if (useApiMock()) {
+    const existing = mockProjects.find(
+      (p) => p.id === idOrSlug || p.slug === idOrSlug,
+    );
+    if (!existing) {
+      const { ApiError } = await import("@/lib/errors/mapApiError");
+      throw new ApiError("NOT_FOUND", "Project not found", 404);
+    }
+    const wasFeaturedPublished = existing.featured && !existing.draft;
+    if (existing.featured && !wasFeaturedPublished) {
+      const others = mockProjects.filter(
+        (p) => p.id !== existing.id && p.featured && !p.draft,
+      ).length;
+      if (others >= 3) {
+        const { ApiError } = await import("@/lib/errors/mapApiError");
+        throw new ApiError(
+          "FEATURED_LIMIT",
+          "Cannot feature more than 3 published projects",
+          400,
+        );
+      }
+    }
     mockProjects = mockProjects.map((p) =>
       p.id === idOrSlug || p.slug === idOrSlug
         ? { ...p, draft: false, publishedAt: new Date().toISOString() }
@@ -338,19 +359,22 @@ export async function updateProject(
         : null;
     }
 
-    const warnings: Project["warnings"] = [];
-    if (next.featured && !next.draft) {
-      const featuredCount = mockProjects.filter(
+    const wasFeaturedPublished = existing.featured && !existing.draft;
+    const willBeFeaturedPublished = next.featured && !next.draft;
+    if (willBeFeaturedPublished && !wasFeaturedPublished) {
+      const others = mockProjects.filter(
         (p) => p.id !== next.id && p.featured && !p.draft,
-      ).length + 1;
-      if (featuredCount > 3) {
-        warnings.push({
-          code: "FEATURED_LIMIT",
-          message: "More than 3 featured",
-        });
+      ).length;
+      if (others >= 3) {
+        const { ApiError } = await import("@/lib/errors/mapApiError");
+        throw new ApiError(
+          "FEATURED_LIMIT",
+          "Cannot feature more than 3 published projects",
+          400,
+        );
       }
     }
-    next.warnings = warnings.length ? warnings : undefined;
+    next.warnings = undefined;
     mockProjects[index] = next;
     return { project: next };
   }

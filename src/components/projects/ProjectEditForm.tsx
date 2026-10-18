@@ -28,7 +28,7 @@ import {
 import { cn } from "@/lib/cn";
 import { copy } from "@/lib/copy/ar";
 import { fields } from "@/lib/copy/fields";
-import { mapApiError } from "@/lib/errors/mapApiError";
+import { ApiError, mapApiError } from "@/lib/errors/mapApiError";
 
 type TabKey = "basics" | "description" | "photos" | "seo";
 
@@ -147,12 +147,12 @@ export function ProjectEditForm({ projectId }: ProjectEditFormProps) {
   const canShowOnWebsite = Boolean(coverId);
   const blockPublish = !published && !canShowOnWebsite;
 
-  const featuredWarningVisible = useMemo(() => {
-    if (!featured || !published) return false;
-    const others = countsQuery.data?.featured ?? 0;
-    // counts include current if already featured+published; soft-cap is 3
-    return others >= 3;
-  }, [featured, published, countsQuery.data?.featured]);
+  const alreadyOnHome = Boolean(
+    query.data?.project.featured && !query.data?.project.draft,
+  );
+  const featuredSlotsFull = (countsQuery.data?.featured ?? 0) >= 3;
+  /** At capacity and this project is not already one of the 3 on the home page. */
+  const featuredLimitReached = featuredSlotsFull && !alreadyOnHome;
 
   function updateCurrent(patch: Partial<LocaleFields>) {
     setFieldsByLocale((prev) => ({
@@ -163,6 +163,10 @@ export function ProjectEditForm({ projectId }: ProjectEditFormProps) {
 
   const saveMutation = useMutation({
     mutationFn: async () => {
+      if (featured && published && featuredLimitReached) {
+        throw new ApiError("FEATURED_LIMIT", copy.featuredLimitError, 400);
+      }
+
       const yearNum = year.trim() ? Number(year) : null;
       if (year.trim() && Number.isNaN(yearNum)) {
         throw new Error("bad year");
@@ -186,10 +190,6 @@ export function ProjectEditForm({ projectId }: ProjectEditFormProps) {
       );
       await setProjectCover(projectId, coverId);
 
-      if (updated.project.warnings?.some((w) => w.code === "FEATURED_LIMIT")) {
-        toast.message(copy.featuredWarning);
-      }
-
       return updated;
     },
     onSuccess: async () => {
@@ -208,15 +208,16 @@ export function ProjectEditForm({ projectId }: ProjectEditFormProps) {
       toast.error(copy.missingMainPhoto);
       return;
     }
+    if (!published && featured && featuredLimitReached) {
+      toast.error(copy.featuredLimitError);
+      return;
+    }
     setVisibilityBusy(true);
     try {
       const result = published
         ? await unpublishProject(projectId)
         : await publishProject(projectId);
       setPublished(!result.project.draft);
-      if (result.project.warnings?.length) {
-        toast.message(copy.featuredWarning);
-      }
       toast.success(
         result.project.draft ? copy.hideFromWebsite : copy.showOnWebsite,
       );
@@ -395,19 +396,33 @@ export function ProjectEditForm({ projectId }: ProjectEditFormProps) {
                 helpText={blockPublish ? copy.missingMainPhoto : undefined}
                 onChange={(checked) => {
                   if (checked && !canShowOnWebsite) return;
+                  if (checked && featured && featuredLimitReached) {
+                    toast.error(copy.featuredLimitError);
+                    return;
+                  }
                   setPublished(checked);
                 }}
               />
               <Switch
                 label={copy.showOnHome}
                 checked={featured}
-                onChange={setFeatured}
+                onChange={(checked) => {
+                  if (checked && published && featuredLimitReached) {
+                    toast.error(copy.featuredLimitError);
+                    return;
+                  }
+                  setFeatured(checked);
+                }}
                 helpText={
-                  featuredWarningVisible ? copy.featuredWarning : undefined
+                  featuredLimitReached
+                    ? copy.featuredLimitError
+                    : copy.featuredWarning
                 }
               />
-              {featuredWarningVisible ? (
-                <p className="text-sm text-primary">{copy.featuredWarning}</p>
+              {featuredLimitReached ? (
+                <p className="text-sm text-danger" role="alert">
+                  {copy.featuredLimitError}
+                </p>
               ) : null}
             </div>
           ) : null}
