@@ -228,7 +228,6 @@ export function ServiceEditForm({ serviceId }: ServiceEditFormProps) {
   }
 
   const slug = query.data.service.slug;
-  const details = current.details ?? [];
   const scope = current.scope ?? [];
   const methodology = current.methodology ?? [];
 
@@ -302,44 +301,6 @@ export function ServiceEditForm({ serviceId }: ServiceEditFormProps) {
               value={current.description ?? ""}
               onChange={(e) => updateCurrent({ description: e.target.value })}
             />
-
-            <div className="space-y-3">
-              <p className="text-sm font-semibold">{copy.serviceDetailsList}</p>
-              {details.map((line, index) => (
-                <div key={index} className="flex flex-wrap gap-2">
-                  <div className="min-w-0 flex-1">
-                    <TextField
-                      label={`${copy.serviceStep} ${index + 1}`}
-                      name={`detail-${index}`}
-                      value={line}
-                      onChange={(e) => {
-                        const next = [...details];
-                        next[index] = e.target.value;
-                        updateCurrent({ details: next });
-                      }}
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    className="btn-ghost text-danger self-end"
-                    onClick={() =>
-                      updateCurrent({
-                        details: details.filter((_, i) => i !== index),
-                      })
-                    }
-                  >
-                    {copy.delete}
-                  </button>
-                </div>
-              ))}
-              <button
-                type="button"
-                className="btn-secondary"
-                onClick={() => updateCurrent({ details: [...details, ""] })}
-              >
-                {copy.serviceAddDetail}
-              </button>
-            </div>
 
             <SingleImageUpload
               label={copy.serviceCardImage}

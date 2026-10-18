@@ -76,7 +76,7 @@ export const fields = {
   },
   servicesUi: {
     knowMore: "نص زر «اعرف المزيد»",
-    close: "نص زر الإغلاق",
+    knowMoreHelp: "يظهر على بطاقة كل خدمة ويفتح صفحة التفاصيل.",
   },
   projectsIntro: {
     intro: "مقدمة صفحة المشاريع",

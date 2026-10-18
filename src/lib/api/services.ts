@@ -44,6 +44,16 @@ export type ServiceListResponse = {
   items: Service[];
 };
 
+export type CreateServiceInput = {
+  slug: string;
+  sortOrder?: number;
+  draft?: boolean;
+  translations: {
+    ar: Pick<ServiceTranslation, "title"> & Partial<ServiceTranslation>;
+    en: Pick<ServiceTranslation, "title"> & Partial<ServiceTranslation>;
+  };
+};
+
 export type UpdateServiceInput = {
   slug?: string;
   sortOrder?: number;
@@ -194,6 +204,51 @@ export async function listServices(
 
   return apiFetch<ServiceListResponse>(`/admin/services?${search.toString()}`, {
     method: "GET",
+  });
+}
+
+export async function createService(
+  input: CreateServiceInput,
+): Promise<{ service: Service }> {
+  if (useApiMock()) {
+    await new Promise((r) => setTimeout(r, 300));
+    if (mockServices.some((s) => s.slug === input.slug)) {
+      const { ApiError } = await import("@/lib/errors/mapApiError");
+      throw new ApiError("SLUG_TAKEN", "Slug taken", 409);
+    }
+    const maxSort = mockServices.reduce(
+      (max, s) => Math.max(max, s.sortOrder),
+      -1,
+    );
+    const arTitle = input.translations.ar.title;
+    const enTitle = input.translations.en.title;
+    const service: Service = {
+      id: `svc-${Date.now()}`,
+      slug: input.slug,
+      sortOrder: input.sortOrder ?? maxSort + 1,
+      draft: input.draft ?? true,
+      title: arTitle || enTitle,
+      translations: {
+        ar: {
+          ...emptyTranslation(arTitle),
+          ...input.translations.ar,
+          title: arTitle,
+        },
+        en: {
+          ...emptyTranslation(enTitle),
+          ...input.translations.en,
+          title: enTitle,
+        },
+      },
+      media: { card: null, banner: null, gallery: [] },
+    };
+    mockServices = [service, ...mockServices];
+    return { service };
+  }
+
+  return apiFetch<{ service: Service }>("/admin/services", {
+    method: "POST",
+    body: input,
   });
 }
 
@@ -363,4 +418,18 @@ export function servicePublicUrl(
     process.env.NEXT_PUBLIC_WEBSITE_URL ?? "http://localhost:3000"
   ).replace(/\/$/, "");
   return `${base}/${locale}/services/${slug}`;
+}
+
+export function slugifyServiceTitle(title: string): string {
+  const latin = title
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, " ")
+    .trim()
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  if (latin.length > 0) return latin.slice(0, 60);
+  return `service-${Date.now().toString(36)}`;
 }

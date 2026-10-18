@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { EmptyState } from "@/components/feedback/EmptyState";
@@ -36,13 +37,18 @@ export function ServicesList() {
 
   return (
     <div className="flex flex-1 flex-col gap-6 p-6 md:p-8">
-      <input
-        className="field-input max-w-md"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        placeholder={copy.searchServices}
-        aria-label={copy.searchServices}
-      />
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <input
+          className="field-input max-w-md"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder={copy.searchServices}
+          aria-label={copy.searchServices}
+        />
+        <Link href="/services/new" className="btn-primary">
+          {copy.addService}
+        </Link>
+      </div>
 
       {query.isLoading ? (
         <p className="text-muted">{copy.loading}</p>
@@ -51,6 +57,13 @@ export function ServicesList() {
       ) : items.length === 0 ? (
         <EmptyState
           message={debounced ? copy.noServicesMatch : copy.noServicesYet}
+          action={
+            !debounced ? (
+              <Link href="/services/new" className="btn-primary">
+                {copy.addService}
+              </Link>
+            ) : undefined
+          }
         />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">

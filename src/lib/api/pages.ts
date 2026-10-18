@@ -112,7 +112,6 @@ function mockSections(key: ApiPageKey, locale: ContentLocale): PageSections {
     return {
       ui: {
         know_more: isAr ? "اعرف المزيد" : "Know more",
-        close: isAr ? "إغلاق" : "Close",
       },
       seo: emptySeo(locale, isAr ? "خدماتنا" : "Services"),
     };

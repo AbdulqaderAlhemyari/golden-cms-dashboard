@@ -5,6 +5,7 @@ import { fields } from "@/lib/copy/fields";
 
 export type ServicesUiValue = {
   know_more?: string;
+  /** @deprecated Unused — services open on a detail page, not a modal. */
   close?: string;
 };
 
@@ -21,14 +22,11 @@ export function ServicesUiSection({ value, onChange }: Props) {
       <TextField
         label={fields.servicesUi.knowMore}
         name="services-know-more"
+        helpText={fields.servicesUi.knowMoreHelp}
         value={current.know_more ?? ""}
-        onChange={(e) => onChange({ ...current, know_more: e.target.value })}
-      />
-      <TextField
-        label={fields.servicesUi.close}
-        name="services-close"
-        value={current.close ?? ""}
-        onChange={(e) => onChange({ ...current, close: e.target.value })}
+        onChange={(e) =>
+          onChange({ ...current, know_more: e.target.value })
+        }
       />
     </div>
   );
