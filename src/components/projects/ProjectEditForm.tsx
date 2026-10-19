@@ -30,11 +30,11 @@ import { copy } from "@/lib/copy/ar";
 import { fields } from "@/lib/copy/fields";
 import { ApiError, mapApiError } from "@/lib/errors/mapApiError";
 
-type TabKey = "basics" | "description" | "photos" | "seo";
+type TabKey = "basics" | "details" | "photos" | "seo";
 
 const tabs: Array<{ key: TabKey; label: string; collapsed?: boolean }> = [
   { key: "basics", label: copy.basics },
-  { key: "description", label: copy.description },
+  { key: "details", label: copy.details },
   { key: "photos", label: copy.photos },
   { key: "seo", label: copy.nav.seoAppearance, collapsed: true },
 ];
@@ -379,10 +379,20 @@ export function ProjectEditForm({ projectId }: ProjectEditFormProps) {
                   label={copy.projectYear}
                   name="year"
                   inputMode="numeric"
+                  checkScript={false}
                   value={year}
                   onChange={(e) => setYear(e.target.value)}
                 />
               </div>
+            </div>
+          ) : null}
+
+          {tab === "details" ? (
+            <div className="space-y-5">
+              <RichTextField
+                value={current.content ?? ""}
+                onChange={(content) => updateCurrent({ content })}
+              />
               <TagInput
                 label={fields.serviceTags}
                 helpText={fields.serviceTagsHelp}
@@ -427,13 +437,6 @@ export function ProjectEditForm({ projectId }: ProjectEditFormProps) {
             </div>
           ) : null}
 
-          {tab === "description" ? (
-            <RichTextField
-              value={current.content ?? ""}
-              onChange={(content) => updateCurrent({ content })}
-            />
-          ) : null}
-
           {tab === "photos" ? (
             <ImageGallery
               items={gallery}
@@ -451,6 +454,7 @@ export function ProjectEditForm({ projectId }: ProjectEditFormProps) {
                 label={copy.pageSlug}
                 name="slug"
                 helpText={copy.pageSlugHelp}
+                checkScript={false}
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
               />

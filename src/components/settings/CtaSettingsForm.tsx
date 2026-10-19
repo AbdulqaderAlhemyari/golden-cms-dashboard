@@ -68,6 +68,7 @@ export function CtaSettingsForm() {
       <TextField
         label={copy.ctaButtonHref}
         name="cta-button-href"
+        checkScript={false}
         value={block.button_href ?? ""}
         onChange={(e) => updateBlock({ button_href: e.target.value })}
       />

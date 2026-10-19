@@ -57,6 +57,7 @@ export const copy = {
   mainPhoto: "الصورة الرئيسية",
   photos: "الصور",
   basics: "الأساسيات",
+  details: "التفاصيل",
   description: "الوصف",
   moreOptions: "المزيد من الخيارات",
   pageSlug: "رابط الصفحة",
@@ -184,8 +185,13 @@ export const copy = {
   uploadNewPhoto: "رفع صورة جديدة",
   addPhotoPickerHint:
     "يمكنك اختيار صورة من المجلدات أو رفع صورة جديدة مع الاسم والوصف.",
+  addPhotoPickerMultiHint:
+    "اختر صورة أو أكثر من المجلدات، ثم اضغط إضافة. يمكنك أيضاً رفع صور جديدة.",
   mediaAlreadyInGallery: "هذه الصورة موجودة بالفعل في المعرض.",
   selectPhoto: "اختيار هذه الصورة",
+  selectedPhotosCount: "تم اختيار {count}",
+  addSelectedPhotos: "إضافة المحددة",
+  addSelectedPhotosWithCount: "إضافة {count} صور",
   mediaLibraryTitle: "الصور والملفات",
   closePanel: "إغلاق",
   loadMore: "عرض المزيد",
@@ -198,10 +204,29 @@ export const copy = {
   mediaFolderParent: "داخل المجلد",
   mediaFolderCreated: "تم إنشاء المجلد.",
   mediaFolderRoot: "الجذر",
-  mediaUploadTitle: "رفع صورة",
+  mediaUploadTitle: "رفع صور",
+  mediaUploadHint:
+    "يمكنك رفع حتى ١٠ صور دفعة واحدة. الحد الأقصى ١٠ ميجابايت للصورة الواحدة، و٥٠ ميجابايت للمجموعة كاملة.",
+  mediaUploadSelectFiles: "اختر الصور",
+  mediaUploadSelectedCount: "تم اختيار {count} من ١٠",
+  mediaUploadBatchSize: "الحجم الإجمالي: {size} ميجابايت من ٥٠",
+  mediaUploadTooMany: "لا يمكن اختيار أكثر من ١٠ صور في المرة الواحدة.",
+  mediaUploadFileTooLarge:
+    "إحدى الصور أكبر من ١٠ ميجابايت. صغّر حجمها أو اختر صورة أخرى.",
+  mediaUploadBatchTooLarge:
+    "إجمالي حجم الصور يتجاوز ٥٠ ميجابايت. قلّل عدد الصور أو حجمها.",
+  mediaUploadEmpty: "يرجى اختيار صورة واحدة على الأقل.",
+  mediaUploadProgress: "جاري الرفع… {done} من {total}",
+  mediaUploadDone: "تم رفع {count} صورة بنجاح.",
   mediaImageTitle: "اسم الصورة",
-  mediaImageTitleHelp: "اسم واضح يظهر في المكتبة (يمكن تعديله لاحقاً).",
+  mediaImageTitleHelp:
+    "بالإنجليزية فقط: أحرف وأرقام وشرطات، مثل: lab-photo-1",
+  mediaImageTitleInvalid:
+    "اسم الصورة يجب أن يكون إنجليزياً فقط (أحرف، أرقام، وشرطات).",
+  mediaImageDesc: "وصف الصورة",
+  mediaImageDescHelp: "وصف قصير لهذه الصورة (اختياري).",
   mediaImageAlt: "وصف الصورة",
+  mediaRemoveFromBatch: "إزالة",
   mediaCurrentFolder: "المجلد الحالي",
   mediaEmptyFolderUpload: "رفع صورة في هذا المجلد",
   mediaSelectFolderHint: "اختر مجلداً من القائمة أو اعرض كل الصور.",
@@ -214,7 +239,7 @@ export const copy = {
   projectYear: "السنة",
   projectPhotos: "الصور",
   projectPhotosHelp:
-    "أضف معرّفات الصور مؤقتاً. رفع الصور وترتيبها سيُتاح بالكامل في الخطوة التالية.",
+    "اختر صوراً من المكتبة أو ارفع صوراً جديدة. الصورة الرئيسية تظهر في بطاقة المشروع.",
   projectPhotoId: "معرّف صورة",
   addPhotoId: "إضافة صورة أخرى",
   projectBasics: "البيانات الأساسية",
@@ -237,6 +262,10 @@ export const copy = {
   confirm: "تأكيد",
   close: "إغلاق",
   contentLanguage: "لغة المحتوى",
+  scriptHintEnglishInArabic:
+    "يبدو أنك تكتب بالإنجليزية بينما تبويب اللغة الحالية هو العربية. بدّل التبويب إلى English إن كان هذا النص للإنجليزية.",
+  scriptHintArabicInEnglish:
+    "يبدو أنك تكتب بالعربية بينما تبويب اللغة الحالية هو English. بدّل التبويب إلى العربية إن كان هذا النص للعربية.",
   openMenu: "فتح القائمة",
   closeMenu: "إغلاق القائمة",
   breadcrumbNav: "مسار التنقل",

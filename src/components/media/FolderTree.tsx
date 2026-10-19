@@ -5,7 +5,6 @@ import { ChevronDown, ChevronLeft, Folder, FolderOpen } from "lucide-react";
 import type { FolderTreeNode } from "@/lib/api/media";
 import { cn } from "@/lib/cn";
 import { copy } from "@/lib/copy/ar";
-import { folderSegmentLabel } from "@/lib/mediaFolders";
 
 type FolderTreeProps = {
   tree: FolderTreeNode[];
@@ -69,7 +68,9 @@ function TreeNode({
           ) : (
             <Folder className="h-4 w-4 shrink-0 text-slate-400" />
           )}
-          <span className="truncate">{folderSegmentLabel(node.name)}</span>
+          <span className="truncate" dir="ltr">
+            {node.name}
+          </span>
         </button>
       </div>
       {hasChildren && open

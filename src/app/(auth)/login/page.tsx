@@ -64,6 +64,7 @@ function LoginForm() {
           name="email"
           type="email"
           autoComplete="username"
+          checkScript={false}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           disabled={submitting}
@@ -74,6 +75,7 @@ function LoginForm() {
           name="password"
           type="password"
           autoComplete="current-password"
+          checkScript={false}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           disabled={submitting}

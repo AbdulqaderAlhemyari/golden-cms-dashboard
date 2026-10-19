@@ -101,7 +101,11 @@ function SortableThumb({
           <button
             type="button"
             className="btn-ghost flex-1 px-1 py-1 text-[11px]"
-            onClick={onSetCover}
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              onSetCover();
+            }}
           >
             {fields.setMainPhoto}
           </button>
@@ -109,7 +113,11 @@ function SortableThumb({
         <button
           type="button"
           className="btn-ghost px-2 py-1 text-[11px] text-danger"
-          onClick={onRemove}
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove();
+          }}
         >
           {copy.delete}
         </button>
@@ -134,21 +142,54 @@ export function ImageGallery({
   );
 
   function addFromPicker(media: MediaItem) {
-    if (items.some((item) => item.id === media.id)) {
+    addManyFromPicker([media]);
+  }
+
+  /** Mark as cover and move that photo to the start of the gallery. */
+  function setAsMainPhoto(id: string) {
+    onCoverChange(id);
+    const index = items.findIndex((item) => item.id === id);
+    if (index <= 0) return;
+    const next = [...items];
+    const [moved] = next.splice(index, 1);
+    if (!moved) return;
+    next.unshift(moved);
+    onChange(next);
+  }
+
+  function addManyFromPicker(mediaList: MediaItem[]) {
+    if (mediaList.length === 0) return;
+
+    const existing = new Set(items.map((item) => item.id));
+    const added: GalleryItem[] = [];
+    let duplicate = false;
+
+    for (const media of mediaList) {
+      if (existing.has(media.id)) {
+        duplicate = true;
+        continue;
+      }
+      existing.add(media.id);
+      added.push({
+        id: media.id,
+        url: media.url,
+        altAr: media.altAr,
+        altEn: media.altEn,
+      });
+    }
+
+    if (duplicate && added.length === 0) {
       toast.message(copy.mediaAlreadyInGallery);
-      setSelectedId(media.id);
+      setSelectedId(mediaList[mediaList.length - 1]?.id ?? null);
       return;
     }
-    const nextItem: GalleryItem = {
-      id: media.id,
-      url: media.url,
-      altAr: media.altAr,
-      altEn: media.altEn,
-    };
-    const next = [...items, nextItem];
+
+    if (added.length === 0) return;
+
+    const next = [...items, ...added];
     onChange(next);
-    if (!coverId) onCoverChange(nextItem.id);
-    setSelectedId(nextItem.id);
+    if (!coverId) onCoverChange(added[0]!.id);
+    setSelectedId(added[added.length - 1]!.id);
   }
 
   function onDragEnd(event: DragEndEvent) {
@@ -209,7 +250,7 @@ export function ImageGallery({
                     isCover={coverId === item.id}
                     selected={selectedId === item.id}
                     onSelect={() => setSelectedId(item.id)}
-                    onSetCover={() => onCoverChange(item.id)}
+                    onSetCover={() => setAsMainPhoto(item.id)}
                     onRemove={() => {
                       const next = items.filter((i) => i.id !== item.id);
                       onChange(next);
@@ -227,7 +268,7 @@ export function ImageGallery({
       </div>
 
       <aside className="card-surface h-fit space-y-4 p-4">
-        <p className="text-sm font-semibold">{fields.photoAltPanel}</p>
+        <p className="field-label">{fields.photoAltPanel}</p>
         {selected ? (
           <>
             {selected.url ? (
@@ -241,6 +282,7 @@ export function ImageGallery({
             <TextField
               label={`${copy.photoAlt} (العربية)`}
               name="alt-ar"
+              scriptLocale="ar"
               value={selected.altAr ?? ""}
               onChange={(e) =>
                 onChange(
@@ -254,6 +296,7 @@ export function ImageGallery({
             <TextField
               label={`${copy.photoAlt} (English)`}
               name="alt-en"
+              scriptLocale="en"
               value={selected.altEn ?? ""}
               onChange={(e) =>
                 onChange(
@@ -273,8 +316,11 @@ export function ImageGallery({
       <MediaPickerModal
         open={pickerOpen}
         folder={uploadFolder}
+        multiple
         onClose={() => setPickerOpen(false)}
         onSelect={addFromPicker}
+        onSelectMany={addManyFromPicker}
+        onUploaded={addManyFromPicker}
       />
     </div>
   );

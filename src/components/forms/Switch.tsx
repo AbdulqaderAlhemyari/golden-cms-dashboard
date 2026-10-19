@@ -1,5 +1,6 @@
 "use client";
 
+import { FieldLabel } from "@/components/forms/FieldLabel";
 import { cn } from "@/lib/cn";
 
 type SwitchProps = {
@@ -24,12 +25,7 @@ export function Switch({
   return (
     <div className="flex items-start justify-between gap-4">
       <div className="min-w-0 space-y-1">
-        <label
-          htmlFor={fieldId}
-          className="block text-sm font-semibold text-foreground"
-        >
-          {label}
-        </label>
+        <FieldLabel htmlFor={fieldId}>{label}</FieldLabel>
         {helpText ? (
           <p className="text-xs leading-relaxed text-muted">{helpText}</p>
         ) : null}

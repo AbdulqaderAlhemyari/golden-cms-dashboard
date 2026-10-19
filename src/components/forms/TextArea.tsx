@@ -1,10 +1,19 @@
+"use client";
+
 import type { TextareaHTMLAttributes } from "react";
+import { FieldLabel } from "@/components/forms/FieldLabel";
+import { LocaleScriptHint } from "@/components/forms/LocaleScriptHint";
+import type { ContentLocale } from "@/components/shell/LanguageTabs";
 import { cn } from "@/lib/cn";
 
 type TextAreaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
   label: string;
   helpText?: string;
   error?: string;
+  /** Detect Arabic/English typed in the wrong language tab. Default true. */
+  checkScript?: boolean;
+  /** Override active language tab for script detection. */
+  scriptLocale?: ContentLocale;
 };
 
 export function TextArea({
@@ -14,21 +23,23 @@ export function TextArea({
   id,
   className,
   rows = 4,
+  checkScript = true,
+  scriptLocale,
+  value,
+  defaultValue,
   ...props
 }: TextAreaProps) {
   const fieldId = id ?? props.name;
+  const currentValue = value ?? defaultValue ?? "";
 
   return (
     <div className="space-y-1.5">
-      <label
-        htmlFor={fieldId}
-        className="block text-sm font-semibold text-foreground"
-      >
-        {label}
-      </label>
+      <FieldLabel htmlFor={fieldId}>{label}</FieldLabel>
       <textarea
         id={fieldId}
         rows={rows}
+        value={value}
+        defaultValue={defaultValue}
         className={cn(
           "field-input min-h-28 resize-y py-3",
           error && "border-danger focus:border-danger",
@@ -50,6 +61,11 @@ export function TextArea({
           {error}
         </p>
       ) : null}
+      <LocaleScriptHint
+        value={currentValue}
+        enabled={checkScript && !error}
+        locale={scriptLocale}
+      />
     </div>
   );
 }

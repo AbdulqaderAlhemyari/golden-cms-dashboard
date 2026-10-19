@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { FieldLabel } from "@/components/forms/FieldLabel";
 import { MediaPickerModal } from "@/components/media/MediaPickerModal";
 import { copy } from "@/lib/copy/ar";
 import { fields } from "@/lib/copy/fields";
@@ -39,7 +40,7 @@ export function ImageField({
 
   return (
     <div className="space-y-2">
-      <p className="text-sm font-semibold text-foreground">{label}</p>
+      <FieldLabel as="p">{label}</FieldLabel>
       {url ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img

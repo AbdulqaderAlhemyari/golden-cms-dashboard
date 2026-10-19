@@ -38,7 +38,7 @@ export function SingleImageUpload({
 
   return (
     <div className="space-y-2">
-      <p className="text-sm font-semibold text-foreground">{label}</p>
+      <p className="field-label">{label}</p>
       {url ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img

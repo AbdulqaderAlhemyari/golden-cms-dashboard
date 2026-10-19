@@ -202,6 +202,7 @@ export function NewServiceForm() {
                   label={copy.pageSlug}
                   name="slug"
                   helpText={copy.pageSlugHelp}
+                  checkScript={false}
                   value={slug}
                   onChange={(e) => {
                     setSlugTouched(true);

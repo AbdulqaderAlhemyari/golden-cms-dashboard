@@ -45,6 +45,7 @@ export function MediaLibrary() {
   const [uploadOpen, setUploadOpen] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<string | null>(null);
   const [items, setItems] = useState<MediaItem[]>([]);
 
   useEffect(() => {
@@ -113,31 +114,46 @@ export function MediaLibrary() {
     }
   }
 
-  async function onUpload(input: {
-    file: File;
-    title: string;
-    altAr: string;
-    altEn: string;
-  }) {
+  async function onUpload(
+    batch: Array<{
+      file: File;
+      title: string;
+      altAr: string;
+      altEn: string;
+    }>,
+  ) {
     setUploading(true);
     setUploadError(null);
+    setUploadProgress(null);
     try {
-      const media = await uploadMedia(input.file, {
-        folder: uploadFolder,
-        title: input.title,
-        altAr: input.altAr || undefined,
-        altEn: input.altEn || undefined,
-      });
+      let last: MediaItem | null = null;
+      for (let i = 0; i < batch.length; i++) {
+        const item = batch[i];
+        setUploadProgress(
+          copy.mediaUploadProgress
+            .replace("{done}", String(i + 1))
+            .replace("{total}", String(batch.length)),
+        );
+        last = await uploadMedia(item.file, {
+          folder: uploadFolder,
+          title: item.title,
+          altAr: item.altAr || undefined,
+          altEn: item.altEn || undefined,
+        });
+      }
       await queryClient.invalidateQueries({ queryKey: ["media"] });
       await queryClient.invalidateQueries({ queryKey: ["media-folders"] });
       setPage(1);
-      setSelected(media);
+      if (last) setSelected(last);
       setUploadOpen(false);
-      toast.success(copy.saved);
+      toast.success(
+        copy.mediaUploadDone.replace("{count}", String(batch.length)),
+      );
     } catch (error) {
       setUploadError(mapApiError(error));
     } finally {
       setUploading(false);
+      setUploadProgress(null);
     }
   }
 
@@ -177,8 +193,8 @@ export function MediaLibrary() {
     <>
       <div className="flex flex-1 flex-col gap-4 p-4 md:flex-row md:gap-6 md:p-8">
         <aside className="w-full shrink-0 md:w-64 lg:w-72">
-          <div className="card-surface sticky top-24 max-h-[70vh] space-y-3 overflow-y-auto p-3">
-            <div className="flex items-center justify-between gap-2 px-1">
+          <div className="card-surface sticky top-24 flex max-h-[70vh] flex-col overflow-hidden">
+            <div className="flex shrink-0 items-center justify-between gap-2 border-b border-border bg-surface px-3 py-3">
               <p className="text-sm font-bold text-foreground">
                 {copy.mediaFolders}
               </p>
@@ -193,26 +209,31 @@ export function MediaLibrary() {
                 {copy.mediaNewFolder}
               </button>
             </div>
-            {foldersQuery.isLoading ? (
-              <p className="px-2 text-sm text-muted">{copy.loading}</p>
-            ) : foldersQuery.isError ? (
-              <p className="px-2 text-sm text-danger">
-                {mapApiError(foldersQuery.error)}
-              </p>
-            ) : (
-              <FolderTree
-                tree={foldersQuery.data?.tree ?? []}
-                selectedPath={folder}
-                onSelect={setFolder}
-              />
-            )}
+            <div className="min-h-0 flex-1 overflow-y-auto p-3">
+              {foldersQuery.isLoading ? (
+                <p className="px-2 text-sm text-muted">{copy.loading}</p>
+              ) : foldersQuery.isError ? (
+                <p className="px-2 text-sm text-danger">
+                  {mapApiError(foldersQuery.error)}
+                </p>
+              ) : (
+                <FolderTree
+                  tree={foldersQuery.data?.tree ?? []}
+                  selectedPath={folder}
+                  onSelect={setFolder}
+                />
+              )}
+            </div>
           </div>
         </aside>
 
         <div className="min-w-0 flex-1 space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="min-w-0">
-              <p className="text-sm font-semibold text-foreground">
+              <p
+                className="text-sm font-semibold text-foreground"
+                dir={folder ? "ltr" : undefined}
+              >
                 {folder
                   ? folderPathLabel(folder)
                   : copy.mediaAllFolders}
@@ -336,6 +357,7 @@ export function MediaLibrary() {
                 <TextField
                   label={copy.mediaImageTitle}
                   name="media-title"
+                  checkScript={false}
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                 />
@@ -402,8 +424,11 @@ export function MediaLibrary() {
         folder={uploadFolder}
         busy={uploading}
         error={uploadError}
-        onCancel={() => setUploadOpen(false)}
-        onConfirm={(input) => void onUpload(input)}
+        progressLabel={uploadProgress}
+        onCancel={() => {
+          if (!uploading) setUploadOpen(false);
+        }}
+        onConfirm={(batch) => void onUpload(batch)}
       />
 
       <ConfirmDialog

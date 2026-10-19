@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useId } from "react";
+import { useContentLocalePublisher } from "@/components/shell/ContentLocaleContext";
 import { cn } from "@/lib/cn";
 import { copy } from "@/lib/copy/ar";
 
@@ -16,6 +18,14 @@ export function LanguageTabs({
   onChange,
   className,
 }: LanguageTabsProps) {
+  const tabId = useId();
+  const { publish, unpublish } = useContentLocalePublisher();
+
+  useEffect(() => {
+    publish(tabId, value);
+    return () => unpublish(tabId);
+  }, [tabId, value, publish, unpublish]);
+
   return (
     <div
       className={cn(

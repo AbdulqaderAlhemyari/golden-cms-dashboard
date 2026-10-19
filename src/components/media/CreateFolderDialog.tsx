@@ -57,7 +57,10 @@ export function CreateFolderDialog({
         </h2>
         <p className="text-sm text-muted">
           {copy.mediaFolderParent}:{" "}
-          <span className="font-semibold text-foreground">
+          <span
+            className="font-semibold text-foreground"
+            dir={parentPath ? "ltr" : undefined}
+          >
             {parentPath
               ? folderPathLabel(parentPath)
               : copy.mediaFolderRoot}
@@ -67,6 +70,7 @@ export function CreateFolderDialog({
           label={copy.mediaFolderName}
           name="folder-name"
           helpText={copy.mediaFolderNameHelp}
+          checkScript={false}
           value={name}
           onChange={(e) => setName(e.target.value)}
           autoFocus

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, type KeyboardEvent } from "react";
+import { FieldLabel } from "@/components/forms/FieldLabel";
+import { LocaleScriptHint } from "@/components/forms/LocaleScriptHint";
 import { copy } from "@/lib/copy/ar";
 import { fields } from "@/lib/copy/fields";
 
@@ -34,7 +36,7 @@ export function TagInput({ label, helpText, value, onChange }: TagInputProps) {
 
   return (
     <div className="space-y-2">
-      <p className="text-sm font-semibold text-foreground">{label}</p>
+      <FieldLabel as="p">{label}</FieldLabel>
       <div className="flex flex-wrap gap-2">
         {value.map((tag) => (
           <span
@@ -65,6 +67,7 @@ export function TagInput({ label, helpText, value, onChange }: TagInputProps) {
           {fields.addTag}
         </button>
       </div>
+      <LocaleScriptHint value={draft || value.join(" ")} />
       {helpText ? (
         <p className="text-xs leading-relaxed text-muted">{helpText}</p>
       ) : null}

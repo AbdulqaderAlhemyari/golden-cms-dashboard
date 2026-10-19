@@ -32,9 +32,7 @@ export function PageLinkSelect({
 
   return (
     <div className={cn("space-y-1.5", className)}>
-      <label className="block text-sm font-semibold text-foreground">
-        {label}
-      </label>
+      <label className="field-label">{label}</label>
       <select
         className="field-input"
         value={selectValue}

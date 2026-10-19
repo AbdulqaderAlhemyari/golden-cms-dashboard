@@ -51,6 +51,7 @@ export function SocialSettingsForm() {
           name={`social-${key}`}
           type="url"
           placeholder="https://"
+          checkScript={false}
           value={draft[key] ?? ""}
           onChange={(e) =>
             setDraft({
