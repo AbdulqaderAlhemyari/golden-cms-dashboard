@@ -137,8 +137,6 @@ export const copy = {
   socialPlatform: "المنصة",
   socialUrl: "رابط الحساب",
   socialName: "اسم المنصة",
-  socialIcon: "أيقونة المنصة",
-  socialIconHelp: "تُستخدم لعرض الأيقونة في الموقع (ثابتة لكل منصة).",
   ctaEnable: "إظهار شريط التواصل في الموقع",
   ctaTitle: "العنوان",
   ctaBody: "النص",

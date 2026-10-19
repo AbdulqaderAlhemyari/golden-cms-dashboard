@@ -84,14 +84,6 @@ export function SocialSettingsForm() {
               value={entry.url ?? ""}
               onChange={(e) => updatePlatform(key, { url: e.target.value })}
             />
-            <TextField
-              label={copy.socialIcon}
-              name={`social-${key}-icon`}
-              checkScript={false}
-              value={entry.icon ?? key}
-              readOnly
-              helpText={copy.socialIconHelp}
-            />
           </div>
         );
       })}
