@@ -55,7 +55,90 @@ export type SeoSettings = {
   meta_image?: MediaRef;
 };
 
-export type SocialSettings = Record<string, string>;
+export const SOCIAL_PLATFORM_KEYS = [
+  "twitter",
+  "facebook",
+  "instagram",
+  "snapchat",
+  "tiktok",
+  "youtube",
+  "linkedin",
+] as const;
+
+export type SocialPlatformKey = (typeof SOCIAL_PLATFORM_KEYS)[number];
+
+export type SocialPlatformEntry = {
+  url: string;
+  name?: Bilingual;
+  icon?: string;
+};
+
+export type SocialSettings = Partial<
+  Record<SocialPlatformKey, SocialPlatformEntry>
+>;
+
+export const SOCIAL_PLATFORM_DEFAULTS: Record<
+  SocialPlatformKey,
+  { name: { en: string; ar: string }; icon: string }
+> = {
+  twitter: { name: { en: "X", ar: "إكس" }, icon: "twitter" },
+  facebook: { name: { en: "Facebook", ar: "فيسبوك" }, icon: "facebook" },
+  instagram: { name: { en: "Instagram", ar: "إنستغرام" }, icon: "instagram" },
+  snapchat: { name: { en: "Snapchat", ar: "سناب شات" }, icon: "snapchat" },
+  tiktok: { name: { en: "TikTok", ar: "تيك توك" }, icon: "tiktok" },
+  youtube: { name: { en: "YouTube", ar: "يوتيوب" }, icon: "youtube" },
+  linkedin: { name: { en: "LinkedIn", ar: "لينكدإن" }, icon: "linkedin" },
+};
+
+export function normalizeSocialSettings(
+  raw: unknown,
+): Record<SocialPlatformKey, SocialPlatformEntry> {
+  const source =
+    raw && typeof raw === "object" && !Array.isArray(raw)
+      ? (raw as Record<string, unknown>)
+      : {};
+
+  const out = {} as Record<SocialPlatformKey, SocialPlatformEntry>;
+  for (const key of SOCIAL_PLATFORM_KEYS) {
+    const defaults = SOCIAL_PLATFORM_DEFAULTS[key];
+    const value = source[key];
+    if (typeof value === "string") {
+      out[key] = {
+        url: value,
+        name: { ...defaults.name },
+        icon: defaults.icon,
+      };
+      continue;
+    }
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      const entry = value as Record<string, unknown>;
+      const nameObj =
+        entry.name && typeof entry.name === "object" && !Array.isArray(entry.name)
+          ? (entry.name as Record<string, unknown>)
+          : {};
+      out[key] = {
+        url: typeof entry.url === "string" ? entry.url : "",
+        name: {
+          en:
+            typeof nameObj.en === "string" ? nameObj.en : defaults.name.en,
+          ar:
+            typeof nameObj.ar === "string" ? nameObj.ar : defaults.name.ar,
+        },
+        icon:
+          typeof entry.icon === "string" && entry.icon
+            ? entry.icon
+            : defaults.icon,
+      };
+      continue;
+    }
+    out[key] = {
+      url: "",
+      name: { ...defaults.name },
+      icon: defaults.icon,
+    };
+  }
+  return out;
+}
 
 export type SettingsResponse<T = Record<string, unknown>> = {
   key: string;
@@ -113,13 +196,20 @@ const mockStore: Record<string, Record<string, unknown>> = {
     meta_description: "Inspection and certification services",
     meta_image: null,
   },
-  social: {
-    facebook: "https://facebook.com/",
-    linkedin: "https://linkedin.com/",
-    twitter: "",
-    instagram: "",
-  },
+  social: normalizeSocialSettings({
+    facebook: { url: "https://facebook.com/", name: { en: "Facebook", ar: "فيسبوك" }, icon: "facebook" },
+    linkedin: { url: "https://linkedin.com/", name: { en: "LinkedIn", ar: "لينكدإن" }, icon: "linkedin" },
+    twitter: { url: "", name: { en: "X", ar: "إكس" }, icon: "twitter" },
+    instagram: { url: "", name: { en: "Instagram", ar: "إنستغرام" }, icon: "instagram" },
+  }),
 };
+
+function maybeNormalizeSocialValue(
+  group: ApiSettingGroup,
+  value: unknown,
+): unknown {
+  return group === "social" ? normalizeSocialSettings(value) : value;
+}
 
 export async function getSettingsGroup<T = Record<string, unknown>>(
   group: ApiSettingGroup,
@@ -128,34 +218,56 @@ export async function getSettingsGroup<T = Record<string, unknown>>(
     await new Promise((r) => setTimeout(r, 150));
     return {
       key: group,
-      value: structuredClone(mockStore[group] ?? {}) as T,
+      value: maybeNormalizeSocialValue(
+        group,
+        structuredClone(mockStore[group] ?? {}),
+      ) as T,
       updatedAt: new Date().toISOString(),
     };
   }
 
-  return apiFetch<SettingsResponse<T>>(`/admin/settings/${group}`, {
+  const res = await apiFetch<SettingsResponse<T>>(`/admin/settings/${group}`, {
     method: "GET",
   });
+  return {
+    ...res,
+    value: maybeNormalizeSocialValue(group, res.value) as T,
+  };
 }
 
 export async function patchSettingsGroup<T = Record<string, unknown>>(
   group: ApiSettingGroup,
   patch: Record<string, unknown>,
 ): Promise<SettingsResponse<T>> {
+  const body =
+    group === "social"
+      ? (normalizeSocialSettings(patch) as Record<string, unknown>)
+      : patch;
+
   if (useApiMock()) {
     await new Promise((r) => setTimeout(r, 250));
-    mockStore[group] = { ...(mockStore[group] ?? {}), ...patch };
+    mockStore[group] =
+      group === "social"
+        ? (body as Record<string, unknown>)
+        : { ...(mockStore[group] ?? {}), ...body };
     return {
       key: group,
-      value: structuredClone(mockStore[group]) as T,
+      value: maybeNormalizeSocialValue(
+        group,
+        structuredClone(mockStore[group]),
+      ) as T,
       updatedAt: new Date().toISOString(),
     };
   }
 
-  return apiFetch<SettingsResponse<T>>(`/admin/settings/${group}`, {
+  const res = await apiFetch<SettingsResponse<T>>(`/admin/settings/${group}`, {
     method: "PATCH",
-    body: patch,
+    body,
   });
+  return {
+    ...res,
+    value: maybeNormalizeSocialValue(group, res.value) as T,
+  };
 }
 
 /** Dashboard route segment → API settings key (`menu` is handled separately). */
