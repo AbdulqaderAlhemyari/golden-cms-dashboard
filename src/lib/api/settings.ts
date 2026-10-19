@@ -34,11 +34,12 @@ export type ContactSettings = {
   commercial_register?: string;
 };
 
+/** Matches seeded `call_to_action` / public settings CTA shape (exactly 2 buttons). */
 export type CtaLocaleBlock = {
   title?: string;
-  body?: string;
-  button_label?: string;
-  button_href?: string;
+  content?: string;
+  contact_label?: string;
+  whatsapp_label?: string;
 };
 
 export type CtaSettings = {
@@ -92,16 +93,18 @@ const mockStore: Record<string, Record<string, unknown>> = {
   cta: {
     enable: true,
     ar: {
-      title: "تواصل معنا",
-      body: "فريقنا جاهز لمساعدتك.",
-      button_label: "اتصل بنا",
-      button_href: "/contact",
+      title: "جاهز لبناء مختبرك المثالي؟ لنتحدث.",
+      content:
+        "فريقنا جاهز لمساعدتك في تصميم وتجهيز وتسليم بيئات مختبرية عالمية المستوى.",
+      contact_label: "اتصل بنا",
+      whatsapp_label: "واتساب",
     },
     en: {
-      title: "Contact us",
-      body: "Our team is ready to help.",
-      button_label: "Contact",
-      button_href: "/contact",
+      title: "Ready to build your ideal laboratory? Let's talk.",
+      content:
+        "Our team is ready to help you design, equip, and deliver world-class laboratory environments.",
+      contact_label: "Contact Us",
+      whatsapp_label: "WhatsApp",
     },
   },
   seo: {

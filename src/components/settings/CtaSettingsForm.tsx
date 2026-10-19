@@ -55,22 +55,23 @@ export function CtaSettingsForm() {
       />
       <TextArea
         label={copy.ctaBody}
-        name="cta-body"
-        value={block.body ?? ""}
-        onChange={(e) => updateBlock({ body: e.target.value })}
+        name="cta-content"
+        value={block.content ?? ""}
+        onChange={(e) => updateBlock({ content: e.target.value })}
       />
       <TextField
-        label={copy.ctaButtonLabel}
-        name="cta-button-label"
-        value={block.button_label ?? ""}
-        onChange={(e) => updateBlock({ button_label: e.target.value })}
+        label={copy.ctaContactLabel}
+        name="cta-contact-label"
+        helpText={copy.ctaContactHelp}
+        value={block.contact_label ?? ""}
+        onChange={(e) => updateBlock({ contact_label: e.target.value })}
       />
       <TextField
-        label={copy.ctaButtonHref}
-        name="cta-button-href"
-        checkScript={false}
-        value={block.button_href ?? ""}
-        onChange={(e) => updateBlock({ button_href: e.target.value })}
+        label={copy.ctaWhatsappLabel}
+        name="cta-whatsapp-label"
+        helpText={copy.ctaWhatsappHelp}
+        value={block.whatsapp_label ?? ""}
+        onChange={(e) => updateBlock({ whatsapp_label: e.target.value })}
       />
     </SettingsFormShell>
   );
