@@ -7,9 +7,10 @@ import { SettingsFormShell } from "@/components/settings/SettingsFormShell";
 import { useSettingsEditor } from "@/hooks/useSettingsEditor";
 import type { SeoSettings } from "@/lib/api/settings";
 import { copy } from "@/lib/copy/ar";
+import { getBilingual, setBilingual } from "@/lib/settings/bilingual";
 
 export function SeoSettingsForm() {
-  const { draft, setDraft, loading, error, reload, unsavedDialog } =
+  const { locale, draft, setDraft, loading, error, reload, unsavedDialog } =
     useSettingsEditor<SeoSettings>("seo");
 
   return (
@@ -22,15 +23,27 @@ export function SeoSettingsForm() {
       <TextField
         label={copy.seoDefaultTitle}
         name="seo-meta-title"
-        value={draft.meta_title ?? ""}
-        onChange={(e) => setDraft({ ...draft, meta_title: e.target.value })}
+        value={getBilingual(draft.meta_title, locale)}
+        onChange={(e) =>
+          setDraft({
+            ...draft,
+            meta_title: setBilingual(draft.meta_title, locale, e.target.value),
+          })
+        }
       />
       <TextArea
         label={copy.seoDefaultDescription}
         name="seo-meta-description"
-        value={draft.meta_description ?? ""}
+        value={getBilingual(draft.meta_description, locale)}
         onChange={(e) =>
-          setDraft({ ...draft, meta_description: e.target.value })
+          setDraft({
+            ...draft,
+            meta_description: setBilingual(
+              draft.meta_description,
+              locale,
+              e.target.value,
+            ),
+          })
         }
       />
       <ImageField
@@ -42,8 +55,17 @@ export function SeoSettingsForm() {
       <TextField
         label={copy.seoAuthor}
         name="seo-meta-author"
-        value={draft.meta_author ?? ""}
-        onChange={(e) => setDraft({ ...draft, meta_author: e.target.value })}
+        value={getBilingual(draft.meta_author, locale)}
+        onChange={(e) =>
+          setDraft({
+            ...draft,
+            meta_author: setBilingual(
+              draft.meta_author,
+              locale,
+              e.target.value,
+            ),
+          })
+        }
       />
     </SettingsFormShell>
   );

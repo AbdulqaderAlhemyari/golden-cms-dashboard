@@ -49,11 +49,41 @@ export type CtaSettings = {
 };
 
 export type SeoSettings = {
-  meta_title?: string;
-  meta_author?: string;
-  meta_description?: string;
+  meta_title?: Bilingual;
+  meta_author?: Bilingual;
+  meta_description?: Bilingual;
   meta_image?: MediaRef;
 };
+
+function asBilingual(value: unknown): Bilingual {
+  if (typeof value === "string") {
+    // Legacy admin payloads stored a single shared string — seed both locales
+    // so neither language tab starts empty after migration.
+    return { ar: value, en: value };
+  }
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    const obj = value as Record<string, unknown>;
+    return {
+      ...(typeof obj.ar === "string" ? { ar: obj.ar } : {}),
+      ...(typeof obj.en === "string" ? { en: obj.en } : {}),
+    };
+  }
+  return {};
+}
+
+export function normalizeSeoSettings(raw: unknown): SeoSettings {
+  const source =
+    raw && typeof raw === "object" && !Array.isArray(raw)
+      ? (raw as Record<string, unknown>)
+      : {};
+
+  return {
+    meta_title: asBilingual(source.meta_title),
+    meta_author: asBilingual(source.meta_author),
+    meta_description: asBilingual(source.meta_description),
+    meta_image: (source.meta_image as MediaRef | undefined) ?? undefined,
+  };
+}
 
 export const SOCIAL_PLATFORM_KEYS = [
   "twitter",
@@ -191,9 +221,15 @@ const mockStore: Record<string, Record<string, unknown>> = {
     },
   },
   seo: {
-    meta_title: "Golden Quality",
-    meta_author: "Golden Quality",
-    meta_description: "Inspection and certification services",
+    meta_title: {
+      ar: "غولدن كواليتي | حلول المختبرات",
+      en: "Golden Quality | Laboratory Solutions",
+    },
+    meta_author: { ar: "غولدن كواليتي", en: "Golden Quality" },
+    meta_description: {
+      ar: "حلول هندسية متكاملة لتجهيز المختبرات في المملكة العربية السعودية.",
+      en: "Integrated engineering solutions for laboratory fit-out in Saudi Arabia.",
+    },
     meta_image: null,
   },
   social: normalizeSocialSettings({
@@ -204,11 +240,13 @@ const mockStore: Record<string, Record<string, unknown>> = {
   }),
 };
 
-function maybeNormalizeSocialValue(
+function maybeNormalizeGroupValue(
   group: ApiSettingGroup,
   value: unknown,
 ): unknown {
-  return group === "social" ? normalizeSocialSettings(value) : value;
+  if (group === "social") return normalizeSocialSettings(value);
+  if (group === "seo") return normalizeSeoSettings(value);
+  return value;
 }
 
 export async function getSettingsGroup<T = Record<string, unknown>>(
@@ -218,7 +256,7 @@ export async function getSettingsGroup<T = Record<string, unknown>>(
     await new Promise((r) => setTimeout(r, 150));
     return {
       key: group,
-      value: maybeNormalizeSocialValue(
+      value: maybeNormalizeGroupValue(
         group,
         structuredClone(mockStore[group] ?? {}),
       ) as T,
@@ -231,7 +269,7 @@ export async function getSettingsGroup<T = Record<string, unknown>>(
   });
   return {
     ...res,
-    value: maybeNormalizeSocialValue(group, res.value) as T,
+    value: maybeNormalizeGroupValue(group, res.value) as T,
   };
 }
 
@@ -242,17 +280,19 @@ export async function patchSettingsGroup<T = Record<string, unknown>>(
   const body =
     group === "social"
       ? (normalizeSocialSettings(patch) as Record<string, unknown>)
-      : patch;
+      : group === "seo"
+        ? (normalizeSeoSettings(patch) as Record<string, unknown>)
+        : patch;
 
   if (useApiMock()) {
     await new Promise((r) => setTimeout(r, 250));
     mockStore[group] =
-      group === "social"
+      group === "social" || group === "seo"
         ? (body as Record<string, unknown>)
         : { ...(mockStore[group] ?? {}), ...body };
     return {
       key: group,
-      value: maybeNormalizeSocialValue(
+      value: maybeNormalizeGroupValue(
         group,
         structuredClone(mockStore[group]),
       ) as T,
@@ -266,7 +306,7 @@ export async function patchSettingsGroup<T = Record<string, unknown>>(
   });
   return {
     ...res,
-    value: maybeNormalizeSocialValue(group, res.value) as T,
+    value: maybeNormalizeGroupValue(group, res.value) as T,
   };
 }
 

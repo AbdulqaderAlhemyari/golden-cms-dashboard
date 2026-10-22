@@ -67,17 +67,11 @@ export function useSettingsEditor<T extends object>(
     mutation.mutate();
   }, [mutation.mutate]);
 
-  const setLocale = useCallback(
-    (next: ContentLocale) => {
-      if (next === locale) return;
-      if (dirty) {
-        const leave = window.confirm(copy.unsavedChanges);
-        if (!leave) return;
-      }
-      setLocaleState(next);
-    },
-    [dirty, locale],
-  );
+  // Settings drafts hold both locales in one object (bilingual fields), so
+  // switching EN/AR must not warn or discard — only navigation away should.
+  const setLocale = useCallback((next: ContentLocale) => {
+    setLocaleState(next);
+  }, []);
 
   const saveRef = useRef(save);
   const setLocaleRef = useRef(setLocale);

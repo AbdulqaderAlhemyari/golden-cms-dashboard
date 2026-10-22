@@ -9,6 +9,8 @@ export const copy = {
   signInSubtitle: "سجّل الدخول لتعديل محتوى الموقع",
   email: "البريد الإلكتروني",
   password: "كلمة المرور",
+  showPassword: "إظهار كلمة المرور",
+  hidePassword: "إخفاء كلمة المرور",
   signOut: "تسجيل الخروج",
   overview: "الرئيسية",
   overviewPrompt: "ماذا تريد أن تعدّل؟",
